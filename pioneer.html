@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Espace Pioneer — GeoTerraChain QFS</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--base:#000008;--b1:#08080F;--b2:#0D0D18;--b3:#12121E;--b4:#18182A;--glass:rgba(255,255,255,.03);--g2:rgba(255,255,255,.06);--gold:#C9A84C;--gl:#F0C860;--gd:#8A6B2A;--gbg:rgba(201,168,76,.08);--gborder:rgba(201,168,76,.2);--cyan:#0EA5E9;--cb:rgba(14,165,233,.2);--green:#10B981;--gb:rgba(16,185,129,.2);--red:#EF4444;--purple:#7B5CF0;--text:#F0E8D8;--t2:#94A3B8;--t3:#475569;--border:rgba(255,255,255,.06);--r:16px;--rs:10px;--rl:24px;--glow:0 0 40px rgba(201,168,76,.12)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--base);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+.topbar{position:sticky;top:0;z-index:100;height:56px;background:rgba(0,0,8,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.topbar::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--purple),transparent);opacity:.4}
+.tb-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tb-ring{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gd);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,rgba(201,168,76,.15),transparent);box-shadow:0 0 12px rgba(201,168,76,.2)}
+.tb-ring span{font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--gold)}
+.tb-name{font-family:'Playfair Display',serif;font-size:14px;color:var(--gold)}
+.tb-sub{font-size:8px;color:var(--gd);letter-spacing:2px;text-transform:uppercase}
+.tnav{display:flex;gap:4px;margin-left:auto}
+.tnav a{font-size:11px;font-weight:600;color:var(--t3);text-decoration:none;padding:5px 10px;border-radius:8px;transition:all .2s;border:1px solid transparent}
+.tnav a:hover{color:var(--gl);border-color:var(--gborder);background:var(--gbg)}
+.pi-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid var(--gborder);border-radius:20px;font-size:11px;font-weight:700;color:var(--gl);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif}
+.pi-pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* SPLASH */
+.splash{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:40px 20px;text-align:center;position:relative;overflow:hidden}
+.splash::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(201,168,76,.06),transparent 70%)}
+.splash-inner{max-width:440px;position:relative;z-index:1}
+.splash-orb{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.2),rgba(201,168,76,.05));border:1px solid var(--gborder);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);margin:0 auto 24px;box-shadow:0 0 40px rgba(201,168,76,.15)}
+.splash-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--text);margin-bottom:10px}
+.splash-desc{color:var(--t2);font-size:14px;font-weight:300;line-height:1.7;margin-bottom:28px}
+
+/* PROFIL HERO */
+.profil-hero{background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(123,92,240,.04));border-bottom:1px solid var(--gborder);padding:28px 20px;position:relative;overflow:hidden}
+.profil-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:250px;height:250px;background:radial-gradient(circle,rgba(201,168,76,.06),transparent 70%);pointer-events:none}
+.profil-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.avatar{width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--gl),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#080808;flex-shrink:0;box-shadow:0 0 32px rgba(201,168,76,.25)}
+.profil-info{flex:1;min-width:0}
+.profil-name{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);margin-bottom:4px}
+.profil-meta{font-size:11px;color:var(--t2);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.profil-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ptag{padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:1px}
+.ptag-kyc{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#6EE7B7}
+.ptag-dev{background:rgba(201,168,76,.12);border:1px solid var(--gborder);color:var(--gl)}
+.ptag-pi{background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.2);color:#7DCCF0}
+.profil-stats{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.pstat{text-align:center;padding:10px 16px;background:rgba(0,0,8,.4);border:1px solid var(--border);border-radius:var(--r);min-width:76px;backdrop-filter:blur(10px)}
+.pstat-v{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);display:block}
+.pstat-l{font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
+
+/* TABS */
+.tabs-bar{background:rgba(0,0,8,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;display:flex;overflow-x:auto;position:sticky;top:56px;z-index:90}
+.tab-btn{padding:12px 16px;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;border-bottom:2px solid transparent;font-family:'Space Grotesk',sans-serif}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.act{color:var(--gl);border-bottom-color:var(--gold)}
+.notif-badge{background:var(--gold);color:#080808;border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700;margin-left:4px}
+
+.content{max-width:1160px;margin:0 auto;padding:28px 20px}
+.sec-label{font-size:9px;font-weight:700;color:var(--gd);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gd),transparent);max-width:100px}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:24px}
+.kpi{background:rgba(13,13,24,.8);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;backdrop-filter:blur(12px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc,var(--gold))}
+.kpi-label{font-size:8px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:3px}
+.kpi-val.gold{color:var(--gold)}
+.kpi-val.green{color:var(--green)}
+.kpi-val.red{color:var(--red)}
+.kpi-sub{font-size:10px;color:var(--t3)}
+
+/* GRID 2 */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.glass-panel{background:rgba(13,13,24,.7);border:1px solid var(--border);border-radius:var(--rl);backdrop-filter:blur(20px);padding:20px;position:relative;overflow:hidden}
+.glass-panel::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02),transparent);pointer-events:none}
+.gp-title{font-size:11px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:3px;margin-bottom:14px}
+
+/* CHART MINI */
+.chart-mini{display:flex;align-items:flex-end;gap:4px;height:44px;margin-bottom:8px}
+.bar-mini{flex:1;border-radius:3px 3px 0 0;min-height:4px;background:var(--gold);transition:opacity .2s}
+.bar-mini:hover{opacity:1!important}
+.chart-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--t3)}
+
+/* QUICK ACTIONS */
+.quick-actions{display:flex;flex-direction:column;gap:8px}
+.qa-link{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--rs);text-decoration:none;color:var(--text);transition:all .2s;font-size:13px;font-weight:600}
+.qa-link:hover{border-color:var(--gborder);background:var(--gbg);color:var(--gl)}
+.qa-arr{color:var(--gd);font-size:16px}
+
+/* ITEMS */
+.card-list{display:flex;flex-direction:column;gap:10px}
+.item-row{display:flex;align-items:center;gap:14px;padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r);flex-wrap:wrap;transition:border-color .2s}
+.item-row:hover{border-color:var(--gborder)}
+.ir-ico{font-size:26px;flex-shrink:0}
+.ir-body{flex:1;min-width:0}
+.ir-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.ir-meta{font-size:11px;color:var(--t2)}
+.ir-right{text-align:right;flex-shrink:0}
+.ir-val{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold);font-weight:700;display:block}
+.ir-sub{font-size:9px;color:var(--t3)}
+
+/* PROG */
+.prog-wrap{margin-top:6px}
+.prog-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:3px}
+.prog{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gl));border-radius:2px}
+
+/* TX */
+.tx-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r);flex-wrap:wrap}
+.tx-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tx-ico.out{background:rgba(201,168,76,.1);border:1px solid var(--gborder)}
+.tx-ico.burn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
+.tx-ico.in{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)}
+.tx-body{flex:1;min-width:0}
+.tx-title{font-size:12px;font-weight:600;color:var(--text)}
+.tx-meta{font-size:10px;color:var(--t2)}
+.tx-amount{text-align:right;flex-shrink:0}
+.tx-val{font-size:13px;font-weight:700}
+.tx-val.gold{color:var(--gold)}
+.tx-val.red{color:var(--red)}
+.tx-val.green{color:var(--green)}
+.tx-hash{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* NOTIF */
+.notif-row{display:flex;gap:12px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;align-items:flex-start}
+.notif-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.notif-dot.gold{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.notif-dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.notif-dot.blue{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.notif-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.notif-desc{font-size:11px;color:var(--t2);font-weight:300;line-height:1.5}
+.notif-time{font-size:10px;color:var(--t3);margin-top:4px}
+
+/* DIASPORA */
+.dia-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.dtab{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
+.dtab:hover,.dtab.act{background:linear-gradient(135deg,var(--gl),var(--gold));color:#080808;border-color:var(--gold)}
+
+/* PIONEER LIST */
+.pioneer-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r);flex-wrap:wrap;transition:border-color .2s;margin-bottom:8px}
+.pioneer-row:hover{border-color:var(--gborder)}
+.p-av{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,var(--gl),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:#080808;flex-shrink:0}
+.p-name{font-size:13px;font-weight:700;color:var(--text)}
+.p-role{font-size:10px;color:var(--t2)}
+.p-stats{display:flex;gap:14px;margin-left:auto;font-size:10px;color:var(--t3)}
+
+/* DIA STATS */
+.dia-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.dsg{background:rgba(13,13,24,.8);border:1px solid var(--gborder);border-radius:var(--r);padding:16px;text-align:center;position:relative;overflow:hidden}
+.dsg::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold)}
+.dsg-v{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);display:block;margin-bottom:3px}
+.dsg-l{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+
+/* INVEST DIASPORA */
+.dia-invest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.dic{background:rgba(13,13,24,.8);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .25s}
+.dic:hover{border-color:var(--gborder);transform:translateY(-2px)}
+.dic-ico{font-size:24px;margin-bottom:12px}
+.dic-title{font-size:13px;font-weight:700;color:var(--gl);margin-bottom:6px}
+.dic-desc{font-size:12px;color:var(--t2);font-weight:300;line-height:1.6;margin-bottom:12px}
+.dic-min{font-size:10px;color:var(--gd);margin-bottom:12px}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg.full{grid-column:1/-1}
+label{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+.req{color:var(--gl)}
+input,select,textarea{width:100%;min-height:44px;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);background:rgba(0,0,8,.5);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all .2s}
+textarea{min-height:90px;resize:vertical}
+select option{background:#0D0D18}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,168,76,.4);box-shadow:0 0 0 3px rgba(201,168,76,.05)}
+input::placeholder,textarea::placeholder{color:var(--t3)}
+
+/* ALERT */
+.alert{padding:12px 14px;border-radius:var(--rs);font-size:12px;border:1px solid var(--border);margin-bottom:14px;line-height:1.6;font-weight:300}
+.al-i{border-color:rgba(14,165,233,.25);color:#7DCCF0;background:rgba(14,165,233,.05)}
+.al-s{border-color:rgba(16,185,129,.25);color:#6EE7B7;background:rgba(16,185,129,.05)}
+.al-w{border-color:rgba(201,168,76,.25);color:var(--gl);background:var(--gbg)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;border:none;text-decoration:none;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--gl),var(--gold));color:#080808;box-shadow:0 6px 20px rgba(201,168,76,.25)}
+.btn-secondary{background:rgba(255,255,255,.05);border:1px solid var(--gborder);color:var(--gl)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--t2)}
+.btn-ghost:hover{border-color:var(--gborder);color:var(--gl)}
+.btn-sm{padding:7px 13px;font-size:11px}
+
+.toast-c{position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;width:min(320px,calc(100vw - 28px))}
+.toast{padding:11px 14px;border-radius:var(--rs);background:rgba(13,13,24,.97);border:1px solid var(--border);font-size:12px;animation:ti .2s ease}
+.toast.success{border-color:rgba(16,185,129,.4);color:#6EE7B7}
+.toast.error{border-color:rgba(239,68,68,.4);color:#FCA5A5}
+.toast.info{border-color:var(--gborder);color:var(--gl)}
+@keyframes ti{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.loader{display:inline-block;width:12px;height:12px;border:1.5px solid rgba(201,168,76,.2);border-top-color:var(--gl);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.footer-bar{text-align:center;padding:24px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+.empty-state{text-align:center;padding:48px 20px;color:var(--t3)}
+@media(max-width:640px){.tnav{display:none}.grid-2{grid-template-columns:1fr}.profil-stats{width:100%}.kpi-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.fg.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="tb-brand"><div class="tb-ring"><span>GTC</span></div><div><div class="tb-name">Espace Pioneer</div><div class="tb-sub">GeoTerraChain QFS</div></div></div>
+  <nav class="tnav"><a href="index.html">Accueil</a><a href="tokenisation-testnet.html">Tokeniser</a><a href="terraimmo.html">TerraImmo</a><a href="cooperatives.html">Coopératives</a><a href="guide-aide-geoterrachain-qfs.html">Guide</a></nav>
+  <div class="pi-btn" id="piBadge"><span class="pi-pulse"></span><span id="piLabel">π Connect</span></div>
+</nav>
+
+<!-- SPLASH -->
+<div id="splashView">
+  <div class="splash">
+    <div class="splash-inner">
+      <div class="splash-orb">π</div>
+      <div class="splash-title">Espace Pioneer</div>
+      <p class="splash-desc">Connectez-vous avec Pi Network pour accéder à votre tableau de bord : parcelles GeoLedger, fractions ImmoπCI, coopératives, transactions Stellar et revenus distribués.</p>
+      <button class="btn btn-primary" id="connectBtn" style="font-size:15px;padding:15px 32px;margin-bottom:14px;">π Se connecter avec Pi Network</button>
+      <p style="font-size:11px;color:var(--gd);">KYC Pi requis · Pi Browser recommandé · Sandbox Testnet</p>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashView" style="display:none;">
+
+<!-- PROFIL HERO -->
+<div class="profil-hero">
+  <div class="profil-inner">
+    <div class="avatar" id="avatarLetter">H</div>
+    <div class="profil-info">
+      <div class="profil-name" id="profilName">@Pioneer</div>
+      <div class="profil-meta" id="profilUid">UID : —</div>
+      <div class="profil-tags">
+        <span class="ptag ptag-kyc">✓ KYC Pi</span>
+        <span class="ptag ptag-dev">Pioneer Vérifié</span>
+        <span class="ptag ptag-pi">GeoTerraChain QFS</span>
+      </div>
+    </div>
+    <div class="profil-stats">
+      <div class="pstat"><span class="pstat-v" id="statParcelles">0</span><div class="pstat-l">Parcelles</div></div>
+      <div class="pstat"><span class="pstat-v" id="statFractions">0</span><div class="pstat-l">Fractions</div></div>
+      <div class="pstat"><span class="pstat-v" id="statCoops">0</span><div class="pstat-l">Coops</div></div>
+      <div class="pstat"><span class="pstat-v" id="statGtc">0</span><div class="pstat-l">GTCπ</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn act" onclick="showTab('overview',this)">📊 Overview</button>
+  <button class="tab-btn" onclick="showTab('parcelles',this)">🌍 Parcelles</button>
+  <button class="tab-btn" onclick="showTab('fractions',this)">🧩 Fractions</button>
+  <button class="tab-btn" onclick="showTab('coops',this)">🤝 Coopératives</button>
+  <button class="tab-btn" onclick="showTab('transactions',this)">⛓️ Transactions</button>
+  <button class="tab-btn" onclick="showTab('diaspora',this)">🌍 Pioneers & Diaspora</button>
+  <button class="tab-btn" onclick="showTab('notifications',this)">🔔 Alertes <span class="notif-badge">3</span></button>
+</div>
+
+<!-- OVERVIEW -->
+<div id="tab-overview">
+<div class="content">
+  <div class="kpi-grid">
+    <div class="kpi" style="--acc:var(--gold)"><div class="kpi-label">Valeur totale actifs</div><div class="kpi-val gold" id="kValeur">—</div><div class="kpi-sub">FCFA estimé</div></div>
+    <div class="kpi" style="--acc:var(--green)"><div class="kpi-label">Revenus distribués</div><div class="kpi-val green" id="kRevenus">—</div><div class="kpi-sub">En Pi cette année</div></div>
+    <div class="kpi" style="--acc:var(--gold)"><div class="kpi-label">GTCπ détenus</div><div class="kpi-val" id="kGtc">—</div><div class="kpi-sub">Token gouvernance</div></div>
+    <div class="kpi" style="--acc:var(--cyan)"><div class="kpi-label">Parcelles actives</div><div class="kpi-val" id="kParcelles">—</div><div class="kpi-sub">Sur GeoLedger</div></div>
+    <div class="kpi" style="--acc:var(--green)"><div class="kpi-label">Fractions ImmoπCI</div><div class="kpi-val" id="kFractions">—</div><div class="kpi-sub">TerraImmo + Élevage</div></div>
+    <div class="kpi" style="--acc:var(--red)"><div class="kpi-label">GTCπ brûlé</div><div class="kpi-val red" id="kBurn">—</div><div class="kpi-sub">Déflation cumulative</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="glass-panel">
+      <div class="gp-title">Activité — 6 derniers mois</div>
+      <div class="chart-mini" id="chartMini"></div>
+      <div class="chart-labels"><span>Mai</span><span>Juin</span><span>Juil</span><span>Août</span><span>Sep</span><span>Oct</span></div>
+    </div>
+    <div class="glass-panel">
+      <div class="gp-title">Actions rapides</div>
+      <div class="quick-actions">
+        <a href="tokenisation-testnet.html" class="qa-link">◈ Tokeniser un actif<span class="qa-arr">→</span></a>
+        <a href="terraimmo.html" class="qa-link">🧩 Acheter des fractions<span class="qa-arr">→</span></a>
+        <a href="cooperatives.html" class="qa-link">🤝 Rejoindre une coopérative<span class="qa-arr">→</span></a>
+        <a href="guide-aide-geoterrachain-qfs.html" class="qa-link">🤖 GeoTerra AI<span class="qa-arr">→</span></a>
+      </div>
+    </div>
+  </div>
+  <div class="sec-label">Dernières transactions</div>
+  <div class="card-list" id="txOverview"></div>
+</div>
+</div>
+
+<!-- PARCELLES -->
+<div id="tab-parcelles" style="display:none">
+<div class="content">
+  <div class="sec-label">Parcelles GeoLedger</div>
+  <div class="card-list" id="parcellesList"></div>
+  <div style="margin-top:20px;text-align:center;"><a href="tokenisation-testnet.html" class="btn btn-primary">◈ Tokeniser une nouvelle parcelle</a></div>
+</div>
+</div>
+
+<!-- FRACTIONS -->
+<div id="tab-fractions" style="display:none">
+<div class="content">
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+    <div class="kpi" style="--acc:var(--green)"><div class="kpi-label">Fractions totales</div><div class="kpi-val green" id="fTot">—</div><div class="kpi-sub">ImmoπCI + AgroPi</div></div>
+    <div class="kpi" style="--acc:var(--gold)"><div class="kpi-label">Valeur totale</div><div class="kpi-val gold" id="fVal">—</div><div class="kpi-sub">FCFA estimé</div></div>
+    <div class="kpi" style="--acc:var(--cyan)"><div class="kpi-label">Revenus projetés</div><div class="kpi-val" id="fRev">—</div><div class="kpi-sub">Selon actif</div></div>
+  </div>
+  <div class="card-list" id="fractionsList"></div>
+  <div style="margin-top:20px;text-align:center;"><a href="terraimmo.html" class="btn btn-primary">🧩 Voir les fractions disponibles</a></div>
+</div>
+</div>
+
+<!-- COOPS -->
+<div id="tab-coops" style="display:none">
+<div class="content">
+  <div class="sec-label">Mes coopératives</div>
+  <div class="card-list" id="coopsList"></div>
+  <div style="margin-top:20px;text-align:center;"><a href="cooperatives.html" class="btn btn-primary">🤝 Rejoindre une coopérative</a></div>
+</div>
+</div>
+
+<!-- TRANSACTIONS -->
+<div id="tab-transactions" style="display:none">
+<div class="content">
+  <div class="sec-label">Historique Stellar · Pi Network · GTCπ</div>
+  <div class="card-list" id="txFull"></div>
+</div>
+</div>
+
+<!-- PIONEERS & DIASPORA -->
+<div id="tab-diaspora" style="display:none">
+<div class="content">
+  <div class="dia-tabs">
+    <button class="dtab act" onclick="switchDia('invest',this)">💰 Investir à distance</button>
+    <button class="dtab" onclick="switchDia('pioneers',this)">🌟 Pioneers actifs</button>
+    <button class="dtab" onclick="switchDia('transfert',this)">📤 Transférer actifs</button>
+    <button class="dtab" onclick="switchDia('stats',this)">📊 Impact Diaspora</button>
+  </div>
+
+  <!-- INVEST -->
+  <div id="dia-invest">
+    <div class="dia-invest-grid">
+      <div class="dic"><div class="dic-ico">🏘️</div><div class="dic-title">Foncier & Immobilier</div><p class="dic-desc">Fractions de terrains et maisons en CI sans vous déplacer. Titres certifiés blockchain.</p><div class="dic-min">À partir de <strong style="color:var(--gold)">0,16 π</strong> / fraction ImmoπCI</div><a href="terraimmo.html" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Voir les biens →</a></div>
+      <div class="dic"><div class="dic-ico">🌾</div><div class="dic-title">Agriculture & Élevage</div><p class="dic-desc">Troupeaux, champs, élevages. Revenus distribués à chaque cycle de production.</p><div class="dic-min">Rendements estimés <strong style="color:var(--green)">8–22%</strong></div><a href="terraimmo.html" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Voir les élevages →</a></div>
+      <div class="dic"><div class="dic-ico">🤝</div><div class="dic-title">Coopératives UEMOA</div><p class="dic-desc">Parts GTCπ dans des groupements rizicoles, cacao, femmes entrepreneures.</p><div class="dic-min">Parts à partir de <strong style="color:var(--gold)">50 000 FCFA</strong></div><a href="cooperatives.html" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Voir les coopératives →</a></div>
+    </div>
+    <div class="glass-panel">
+      <div class="gp-title">◈ Demande d'investissement Diaspora</div>
+      <div class="form-grid">
+        <div class="fg"><label>Pays de résidence <span class="req">*</span></label>
+          <select id="dPays"><option value="">Sélectionner</option><option>🇫🇷 France</option><option>🇧🇪 Belgique</option><option>🇨🇭 Suisse</option><option>🇩🇪 Allemagne</option><option>🇬🇧 Royaume-Uni</option><option>🇺🇸 États-Unis</option><option>🇨🇦 Canada</option><option>🇦🇪 Émirats Arabes Unis</option><option>🇸🇳 Sénégal</option><option>Autre</option></select>
+        </div>
+        <div class="fg"><label>Type d'actif ciblé <span class="req">*</span></label>
+          <select id="dActif"><option value="">Sélectionner</option><option>🌍 Terrain / Parcelle</option><option>🏠 Maison / Villa</option><option>🌾 Champ agricole</option><option>🐄 Élevage</option><option>🤝 Parts de coopérative</option><option>🌿 Portefeuille mixte</option></select>
+        </div>
+        <div class="fg"><label>Zone d'intérêt CI / UEMOA</label><input id="dZone" type="text" placeholder="Ex : Abidjan, Bouaké, UEMOA"></div>
+        <div class="fg"><label>Budget d'investissement</label>
+          <select id="dBudget"><option>Moins de 1 000 €</option><option>1 000 – 5 000 €</option><option>5 000 – 20 000 €</option><option>20 000 – 100 000 €</option><option>Plus de 100 000 €</option></select>
+        </div>
+        <div class="fg full"><label>Message / Précisions</label><textarea id="dMsg" placeholder="Décrivez votre projet, attentes de rendement, délais..."></textarea></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:10px;">
+        <span style="font-size:11px;color:var(--t2);">Un agent terrain GeoTerraChain QFS vous répond sous 48h</span>
+        <button class="btn btn-primary" onclick="submitDiaspora()">📤 Envoyer ma demande</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIONEERS -->
+  <div id="dia-pioneers" style="display:none">
+    <div class="alert al-i">🌟 Pioneers actifs sur GeoTerraChain QFS. Chaque Pioneer est un utilisateur Pi Network KYC vérifié.</div>
+    <div id="pioneersList"></div>
+  </div>
+
+  <!-- TRANSFERT -->
+  <div id="dia-transfert" style="display:none">
+    <div class="alert al-w">📤 Transférez des fractions ou des parts GTCπ à un autre @username Pi via smart contract Soroban.</div>
+    <div class="glass-panel" style="margin-bottom:16px;">
+      <div class="gp-title">◈ Transférer un actif</div>
+      <div class="form-grid">
+        <div class="fg"><label>Actif à transférer <span class="req">*</span></label>
+          <select id="tActif"><option value="">Sélectionner</option><option value="frac1">5 fractions ImmoπCI — Cocody Riviera 2</option><option value="frac2">10 fractions AgroPi — Troupeau Korhogo</option><option value="coop1">500 parts GTCπ — COOPRIZ Songon</option></select>
+        </div>
+        <div class="fg"><label>Destinataire @username Pi <span class="req">*</span></label><input id="tDest" type="text" placeholder="@username Pi Network"></div>
+        <div class="fg"><label>Quantité</label><input id="tQty" type="number" min="1" placeholder="Ex : 2 fractions"></div>
+        <div class="fg"><label>Message pour le destinataire</label><input id="tMsg" type="text" placeholder="Ex : Cadeau de la famille pour ton terrain"></div>
+      </div>
+      <div style="text-align:right;margin-top:14px;"><button class="btn btn-primary" onclick="transfererActif()">⛓️ Initier le transfert Pi</button></div>
+    </div>
+    <div class="glass-panel">
+      <div class="gp-title">💡 Cas d'usage Diaspora → Famille</div>
+      ${['👨‍👩‍👧 Offrir des fractions d\'un terrain à vos enfants restés au pays','🌾 Transmettre des parts de coopérative rizicole à votre frère producteur','🐄 Déléguer la gestion d\'un élevage tokenisé à un cousin local','🏠 Partager la propriété d\'une maison familiale entre frères et sœurs'].map(t=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--t2);">${t}</div>`).join('')}
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div id="dia-stats" style="display:none">
+    <div class="dia-stat-grid">
+      <div class="dsg"><span class="dsg-v">$95B</span><span class="dsg-l">Envois diaspora Afrique/an</span></div>
+      <div class="dsg"><span class="dsg-v">2,3M</span><span class="dsg-l">Ivoiriens à l'étranger</span></div>
+      <div class="dsg"><span class="dsg-v">$2,7B</span><span class="dsg-l">Envois vers CI/an</span></div>
+      <div class="dsg"><span class="dsg-v">&lt;5%</span><span class="dsg-l">Part investie en actifs</span></div>
+    </div>
+    <div class="alert al-i">🎯 <strong>Opportunité GeoTerraChain QFS :</strong> Transformer une partie des $2,7 milliards d'envois annuels vers CI en investissements productifs tokenisés — terres, élevage, coopératives — avec revenus traçables en Pi.</div>
+    <div class="glass-panel">
+      <div class="gp-title">Flux diaspora sur GeoTerraChain QFS</div>
+      ${[['🇫🇷 France → Côte d\'Ivoire','Terrains Abidjan · Coopératives rizicoles','Actif'],['🇧🇪 Belgique → Côte d\'Ivoire','Élevage bovin · Plantations cacao','Actif'],['🇺🇸 États-Unis → UEMOA','Fractions ImmoπCI · Pisciculture','En cours'],['🇦🇪 UAE → Côte d\'Ivoire','Terrains San-Pédro · Apiculture','En cours'],['🇨🇦 Canada → Burkina Faso','Coopératives maraîchères · Élevage','À venir']].map(([from,actifs,statut])=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;">
+          <div style="font-size:13px;font-weight:600;">${from}</div>
+          <div style="font-size:11px;color:var(--t2);flex:1;">${actifs}</div>
+          <span style="padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;background:${statut==='Actif'?'rgba(16,185,129,.12)':statut==='En cours'?'rgba(201,168,76,.12)':'rgba(14,165,233,.1)'};color:${statut==='Actif'?'#6EE7B7':statut==='En cours'?'var(--gl)':'#7DCCF0'};border:1px solid ${statut==='Actif'?'rgba(16,185,129,.25)':statut==='En cours'?'rgba(201,168,76,.25)':'rgba(14,165,233,.2)'};">${statut}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div id="tab-notifications" style="display:none">
+<div class="content">
+  <div id="notifList"></div>
+</div>
+</div>
+
+</div><!-- fin dashView -->
+<footer class="footer-bar">GeoTerraChain QFS · Espace Pioneer · NOTRE TERRE · NOTRE RICHESSE · © 2026 · Pi Network · Stellar Testnet</footer>
+<div class="toast-c" id="toastC"></div>
+
+<script>
+const CFG={API:'https://geoterrachain-qfs-vercel.vercel.app',GCV:314159,SANDBOX:true,SCOPES:['username','payments']};
+const S={piUser:null,accessToken:null,authed:false};
+
+const PIONEERS=[
+  {username:'Hilaila',pays:'Côte d\'Ivoire',role:'Président Fondateur GTC QFS',parcelles:2,fractions:18,coops:1,gtc:1791,kyc:true,ico:'🌍'},
+  {username:'Konan_Agri',pays:'Côte d\'Ivoire',role:'Producteur rizicole',parcelles:5,fractions:0,coops:2,gtc:5000,kyc:true,ico:'🌾'},
+  {username:'Traore_Eleveur',pays:'Côte d\'Ivoire',role:'Éleveur bovin',parcelles:1,fractions:25,coops:1,gtc:2500,kyc:true,ico:'🐄'},
+  {username:'FemmesAgbo45',pays:'Côte d\'Ivoire',role:'Coopérative Femmes',parcelles:0,fractions:0,coops:1,gtc:45000,kyc:true,ico:'👩'},
+  {username:'DiasporaCI_Paris',pays:'🇫🇷 France',role:'Investisseur diaspora',parcelles:0,fractions:50,coops:2,gtc:3200,kyc:true,ico:'🇫🇷'},
+  {username:'Cisse_Bouake',pays:'Côte d\'Ivoire',role:'Maraîcher',parcelles:3,fractions:10,coops:1,gtc:1200,kyc:false,ico:'🥬'},
+  {username:'DiasporaBruxelles',pays:'🇧🇪 Belgique',role:'Investisseur diaspora',parcelles:0,fractions:30,coops:1,gtc:1800,kyc:true,ico:'🇧🇪'},
+  {username:'PecheurJacq',pays:'Côte d\'Ivoire',role:'Pêcheur artisanal',parcelles:0,fractions:8,coops:1,gtc:800,kyc:false,ico:'🐟'},
+];
+
+function getDemoData(un){
+  return {
+    parcelles:[
+      {id:'TER-ABJ-001',type:'terrain_agricole',ico:'🌍',titre:'Terrain agricole 10,5 ha — Songon',ville:'Abidjan · Songon',superficie:'10.50 ha',statut:'active',nft:true,valeur:36750000,gtcEmis:1000,gtcBrule:5,ref:'GTC-1791248309869-CSOHR9',txid:'c65874e9fcbb0e8172…',date:'06/10/2026'},
+      {id:'TER-BKE-002',type:'riziere',ico:'🌾',titre:'Rizière irriguée 8 ha — Bouaké Nimbo',ville:'Bouaké · Nimbo',superficie:'8.00 ha',statut:'en_verification',nft:false,valeur:16000000,gtcEmis:800,gtcBrule:4,ref:'TER-BKE-002',txid:'—',date:'05/10/2026'},
+    ],
+    fractions:[
+      {ico:'🌍',titre:'Terrain 500m² — Cocody Riviera 2',type:'ImmoπCI',qty:5,prixUnit:50000,valeur:250000,rendement:'Plus-value revente',pct:'0.500%',date:'06/10/2026'},
+      {ico:'🐄',titre:'Troupeau 50 bovins — Korhogo',type:'AgroPi',qty:10,prixUnit:50000,valeur:500000,rendement:'Vente animaux (annuel)',pct:'2.00%',date:'06/10/2026'},
+      {ico:'🍄',titre:'Champignonnière 500m² — Daloa',type:'AgroPi',qty:3,prixUnit:20000,valeur:60000,rendement:'Vente Volvariella volvacea + Pleurotes',pct:'0.923%',date:'05/10/2026'},
+    ],
+    coops:[
+      {ico:'🌾',nom:'COOPRIZ Songon',type:'Riziculture',parts:500,capital:280000,pct:'1.786%',revenus_est:678571,distrib:'Proportionnel',date:'06/10/2026'},
+    ],
+    tx:[
+      {type:'out',ico:'🔥',titre:'Paiement Pi — Tokenisation GeoNFT',meta:'Réf : GTC-1791248309869-CSOHR9',amount:'-0.001 π',cls:'gold',hash:'c65874e9…',date:'06/10/2026 01:00'},
+      {type:'burn',ico:'♻️',titre:'Burn GTCπ — Émission parcelle Songon',meta:'5 GTCπ brûlés · TER-ABJ-001',amount:'-5 GTCπ',cls:'red',hash:'a0dbcef9…',date:'06/10/2026 01:01'},
+      {type:'out',ico:'🧩',titre:'Achat fractions ImmoπCI — Cocody',meta:'5 fractions · Réf : TI-ABJ-001',amount:'-0.008 π',cls:'gold',hash:'—',date:'06/10/2026 01:15'},
+      {type:'out',ico:'🐄',titre:'Achat fractions AgroPi — Korhogo',meta:'10 fractions · Réf : EL-KOR-001',amount:'-0.016 π',cls:'gold',hash:'—',date:'06/10/2026 01:20'},
+      {type:'in',ico:'🌾',titre:'Revenu AgroPi distribué — Daloa',meta:'Cycle oct. 2026 · 3 fractions Volvariella',amount:'+0.0032 π',cls:'green',hash:'—',date:'06/10/2026 06:00'},
+    ],
+    notifs:[
+      {color:'gold',title:'🗳️ Vote en cours — COOPRIZ Songon',desc:'Résolution : Acquérir un 3ème tracteur Kubota 80CV. Votre vote est attendu avant le 15 nov. 2026.',time:'Il y a 2 heures'},
+      {color:'green',title:'✅ Parcelle TER-ABJ-001 vérifiée',desc:'Votre terrain agricole 10,5 ha à Songon a été certifié GeoTerraChain QFS. GeoNFT actif sur Stellar.',time:'Il y a 5 heures'},
+      {color:'blue',title:'📊 Revenu AgroPi disponible',desc:'0.0032 π distribués sur vos fractions Champignonnière Daloa (Volvariella volvacea + Pleurotes) — Cycle octobre 2026.',time:'Il y a 1 jour'},
+    ],
+    kpi:{valeur:36750000+16000000+250000+500000+60000,revenus:'0.0032 π',gtc:1791,parcelles:2,fractions:18,burn:9,activite:[12,28,15,42,35,68]}
+  };
+}
+
+function $(id){return document.getElementById(id)}
+function toast(msg,type='info'){const c=$('toastC');const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),4200)}
+function fFcfa(v){return Number(v).toLocaleString('fr-FR')+' FCFA'}
+function fNum(v){return Number(v).toLocaleString('fr-FR')}
+
+function showTab(n,btn){
+  ['overview','parcelles','fractions','coops','transactions','diaspora','notifications'].forEach(t=>{const el=$('tab-'+t);if(el)el.style.display='none'});
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('act'));
+  const el=$('tab-'+n);if(el)el.style.display='block';
+  btn.classList.add('act');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function switchDia(section,btn){
+  ['invest','pioneers','transfert','stats'].forEach(s=>{const el=$('dia-'+s);if(el)el.style.display='none'});
+  document.querySelectorAll('.dtab').forEach(b=>{b.classList.remove('act')});
+  const el=$('dia-'+section);if(el)el.style.display='block';
+  if(btn)btn.classList.add('act');
+  if(section==='pioneers')renderPioneers();
+}
+
+function renderDashboard(un){
+  const data=getDemoData(un);const k=data.kpi;
+  $('avatarLetter').textContent=un.charAt(0).toUpperCase();
+  $('profilName').textContent='@'+un;
+  $('profilUid').textContent='UID : '+S.piUser.uid.slice(0,24)+'…';
+  $('statParcelles').textContent=k.parcelles;$('statFractions').textContent=k.fractions;$('statCoops').textContent=data.coops.length;$('statGtc').textContent=fNum(k.gtc);
+  $('kValeur').textContent=fFcfa(k.valeur);$('kRevenus').textContent=k.revenus;$('kGtc').textContent=fNum(k.gtc)+' GTCπ';$('kParcelles').textContent=k.parcelles;$('kFractions').textContent=k.fractions;$('kBurn').textContent='−'+k.burn+' GTCπ';
+
+  // Chart
+  const chart=$('chartMini');const max=Math.max(...k.activite);
+  chart.innerHTML=k.activite.map((v,i)=>`<div class="bar-mini" style="height:${Math.round(v/max*100)}%;opacity:${i===k.activite.length-1?1:.55};" title="${v} ops"></div>`).join('');
+
+  // TX overview
+  $('txOverview').innerHTML=renderTxList(data.tx.slice(0,3));
+
+  // Parcelles
+  $('parcellesList').innerHTML=data.parcelles.map(p=>`
+    <div class="item-row">
+      <span class="ir-ico">${p.ico}</span>
+      <div class="ir-body">
+        <div class="ir-title">${p.titre}</div>
+        <div class="ir-meta">📍 ${p.ville} · ${p.superficie} · ${p.date}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+          <span style="font-size:9px;padding:2px 8px;border-radius:4px;background:${p.statut==='active'?'rgba(16,185,129,.12)':'rgba(245,158,11,.1)'};color:${p.statut==='active'?'#6EE7B7':'#FCD34D'};border:1px solid ${p.statut==='active'?'rgba(16,185,129,.25)':'rgba(245,158,11,.2)'};">${p.statut==='active'?'✓ Active':'⏳ En vérification'}</span>
+          ${p.nft?'<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:var(--gbg);color:var(--gl);border:1px solid var(--gborder);">🏷️ GeoNFT émis</span>':''}
+        </div>
+        ${p.ref!=='—'?`<div style="font-size:9px;color:var(--t3);margin-top:5px;font-family:'JetBrains Mono',monospace;">Réf : ${p.ref}</div>`:''}
+      </div>
+      <div class="ir-right"><span class="ir-val">${fFcfa(p.valeur)}</span><span class="ir-sub">${fNum(p.gtcEmis)} GTCπ émis</span><span class="ir-sub" style="color:var(--red);">−${p.gtcBrule} GTCπ burn</span></div>
+    </div>`).join('');
+
+  // Fractions
+  const fTot=data.fractions.reduce((a,f)=>a+f.qty,0);const fVal=data.fractions.reduce((a,f)=>a+f.valeur,0);
+  $('fTot').textContent=fNum(fTot);$('fVal').textContent=fFcfa(fVal);$('fRev').textContent='Var. selon actif';
+  $('fractionsList').innerHTML=data.fractions.map(f=>`
+    <div class="item-row">
+      <span class="ir-ico">${f.ico}</span>
+      <div class="ir-body">
+        <div class="ir-title">${f.titre}</div>
+        <div class="ir-meta" style="font-family:'JetBrains Mono',monospace;font-size:10px;">${f.type} · ${f.qty} fraction(s) · Part : ${f.pct} · ${f.date}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:4px;">🔄 ${f.rendement}</div>
+      </div>
+      <div class="ir-right"><span class="ir-val">${fFcfa(f.valeur)}</span><span class="ir-sub">${fFcfa(f.prixUnit)} / fraction</span></div>
+    </div>`).join('');
+
+  // Coops
+  $('coopsList').innerHTML=data.coops.map(c=>`
+    <div class="item-row">
+      <span class="ir-ico">${c.ico}</span>
+      <div class="ir-body">
+        <div class="ir-title">${c.nom}</div>
+        <div class="ir-meta">${c.type} · Membre actif depuis ${c.date}</div>
+        <div class="prog-wrap">
+          <div class="prog-labels"><span>Parts : ${fNum(c.parts)} GTCπ / ${fNum(c.capital)} total</span><span>${c.pct}</span></div>
+          <div class="prog"><div class="prog-fill" style="width:${c.pct}"></div></div>
+        </div>
+      </div>
+      <div class="ir-right"><span class="ir-val" style="color:#6EE7B7;">${fFcfa(c.revenus_est)}</span><span class="ir-sub">Revenu estimé/an</span><span class="ir-sub">${c.distrib}</span></div>
+    </div>`).join('');
+
+  // TX full
+  $('txFull').innerHTML=renderTxList(data.tx);
+
+  // Notifs
+  $('notifList').innerHTML=data.notifs.map(n=>`
+    <div class="notif-row">
+      <span class="notif-dot ${n.color}"></span>
+      <div>
+        <div class="notif-title">${n.title}</div>
+        <div class="notif-desc">${n.desc}</div>
+        <div class="notif-time">🕐 ${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderTxList(txs){
+  return txs.map(tx=>`
+    <div class="tx-row">
+      <div class="tx-ico ${tx.type}">${tx.ico}</div>
+      <div class="tx-body"><div class="tx-title">${tx.titre}</div><div class="tx-meta">${tx.meta}</div></div>
+      <div class="tx-amount">
+        <div class="tx-val ${tx.cls}">${tx.amount}</div>
+        <div class="tx-hash">${tx.date}</div>
+        ${tx.hash!=='—'?`<div class="tx-hash">${tx.hash}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderPioneers(){
+  $('pioneersList').innerHTML=PIONEERS.map(p=>`
+    <div class="pioneer-row">
+      <div class="p-av">${p.ico}</div>
+      <div>
+        <div class="p-name">@${p.username} ${p.kyc?'<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.25);">✓ KYC</span>':''}</div>
+        <div class="p-role">${p.role} · ${p.pays}</div>
+      </div>
+      <div class="p-stats">
+        <span>🌍 ${p.parcelles}</span>
+        <span>🧩 ${p.fractions}</span>
+        <span>🤝 ${p.coops}</span>
+        <span style="color:var(--gold);">${fNum(p.gtc)} GTCπ</span>
+      </div>
+    </div>`).join('');
+}
+
+function submitDiaspora(){const pays=$('dPays').value,actif=$('dActif').value;if(!pays||!actif){toast('Sélectionnez votre pays et le type d\'actif.','error');return}toast('✅ Demande envoyée. Un agent GTC QFS vous contactera sous 48h.','success');}
+function transfererActif(){if(!S.authed){toast('Connexion Pi requise.','error');return}const actif=$('tActif').value,dest=$('tDest').value.trim();if(!actif||!dest){toast('Sélectionnez l\'actif et le destinataire.','error');return}toast('⛓️ Transfert initié vers '+dest+' — Confirmation Pi requise.','info');}
+
+async function connectPi(){
+  if(!window.Pi){toast('Ouvrez dans Pi Browser.','error');return}
+  $('connectBtn').disabled=true;$('connectBtn').innerHTML='<span class="loader"></span>Connexion…';
+  $('piLabel').innerHTML='<span class="loader"></span>';
+  try{
+    const auth=await Pi.authenticate(CFG.SCOPES,p=>console.log(p));
+    S.piUser=auth.user;S.accessToken=auth.accessToken;S.authed=true;
+    $('piLabel').textContent='@'+auth.user.username;
+    $('splashView').style.display='none';$('dashView').style.display='block';
+    renderDashboard(auth.user.username);
+    toast('Bienvenue @'+auth.user.username+' 👋','success');
+  }catch(e){$('connectBtn').disabled=false;$('connectBtn').textContent='π Se connecter avec Pi Network';$('piLabel').innerHTML='<span class="pi-pulse"></span><span>π Connect</span>';toast('Connexion annulée.','error');}
+}
+$('piBadge').addEventListener('click',()=>{if(S.authed){toast('Connecté @'+S.piUser.username,'info');return}connectPi()});
+$('connectBtn').addEventListener('click',connectPi);
+document.addEventListener('DOMContentLoaded',()=>{if(window.Pi) Pi.init({version:'2.0',sandbox:CFG.SANDBOX})});
+</script>
+</body>
+</html>
