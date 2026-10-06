@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GeoTerraChain QFS — Notre Terre · Notre Richesse</title>
+<meta name="description" content="Première plateforme panafricaine de tokenisation RWA sur Pi Network. Foncier, agriculture, élevage, coopératives UEMOA.">
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — GeoTerraChain QFS Premium
+═══════════════════════════════════════════ */
+:root {
+  --base:      #000008;
+  --base-1:    #08080F;
+  --base-2:    #0D0D18;
+  --base-3:    #12121E;
+  --base-4:    #18182A;
+  --glass:     rgba(255,255,255,0.03);
+  --glass-2:   rgba(255,255,255,0.06);
+  --glass-gold:rgba(201,168,76,0.06);
+
+  --gold:      #C9A84C;
+  --gold-l:    #F0C860;
+  --gold-d:    #8A6B2A;
+  --gold-glow: rgba(201,168,76,0.25);
+  --gold-bg:   rgba(201,168,76,0.08);
+
+  --cyan:      #0EA5E9;
+  --cyan-glow: rgba(14,165,233,0.2);
+  --purple:    #7B5CF0;
+  --green:     #10B981;
+  --red:       #EF4444;
+  --orange:    #F59E0B;
+
+  --text:      #F0E8D8;
+  --text-2:    #94A3B8;
+  --text-3:    #475569;
+  --text-4:    #2D3748;
+
+  --border:    rgba(255,255,255,0.06);
+  --border-g:  rgba(201,168,76,0.2);
+  --border-c:  rgba(14,165,233,0.15);
+
+  --shadow:    0 0 0 1px var(--border), 0 20px 60px rgba(0,0,0,0.5);
+  --glow-gold: 0 0 40px rgba(201,168,76,0.15), 0 0 80px rgba(201,168,76,0.05);
+  --glow-cyan: 0 0 40px rgba(14,165,233,0.15);
+
+  --r:   16px;
+  --r-sm:10px;
+  --r-lg:24px;
+  --r-xl:32px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--base);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 56px;
+  background: rgba(0,0,8,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 12px;
+}
+.topbar::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--cyan), transparent);
+  opacity: 0.4;
+}
+
+.tb-brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.tb-logo-ring {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--gold-d);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 30% 30%, rgba(201,168,76,0.15), transparent);
+  box-shadow: 0 0 12px rgba(201,168,76,0.2);
+}
+.tb-logo-ring span {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px; font-weight: 700; color: var(--gold);
+}
+.tb-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; color: var(--gold); letter-spacing: 0.5px;
+}
+.tb-tag {
+  font-size: 8px; color: var(--gold-d);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* LANG SWITCHER */
+.lang-pills {
+  display: flex; gap: 2px; align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px;
+  margin: 0 auto;
+}
+.lp {
+  padding: 4px 10px; border-radius: 16px;
+  font-size: 10px; font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all .2s;
+  border: none; background: none;
+  font-family: 'Space Grotesk', sans-serif;
+  white-space: nowrap;
+}
+.lp:hover { color: var(--text-2); }
+.lp.act {
+  background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.1));
+  color: var(--gold);
+  border: 1px solid rgba(201,168,76,0.3);
+}
+.lang-div {
+  width: 1px; height: 12px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+/* PI CONNECT BTN */
+.pi-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+  border: 1px solid var(--border-g);
+  border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  color: var(--gold-l);
+  cursor: pointer;
+  transition: all .25s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.pi-btn:hover {
+  background: linear-gradient(135deg, rgba(201,168,76,0.25), rgba(201,168,76,0.1));
+  box-shadow: 0 0 20px rgba(201,168,76,0.15);
+}
+.pi-pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(0.85)} }
+
+/* ── TICKER ── */
+.ticker {
+  background: rgba(0,0,8,0.9);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-flex; gap: 48px;
+  animation: ticker 30s linear infinite;
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.tick-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-3);
+}
+.tick-name { color: var(--gold); font-weight: 500; }
+.tick-val { color: var(--text-2); }
+.tick-up { color: var(--green); }
+.tick-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-4); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 130px 20px 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Mesh gradient */
+.hero-mesh {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 0% 100%, rgba(14,165,233,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 100% 50%, rgba(123,92,240,0.05) 0%, transparent 60%);
+}
+/* Grid */
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 860px; }
+
+/* Floating badge */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-bottom: 28px;
+  padding: 6px 16px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 20px;
+  font-size: 10px; font-weight: 600;
+  color: var(--gold-d);
+  letter-spacing: 3px; text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+.badge-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* Main title */
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 10vw, 96px);
+  font-weight: 700;
+  line-height: 0.95;
+  margin-bottom: 10px;
+  letter-spacing: -2px;
+}
+.ht-main { color: var(--text); display: block; }
+.ht-accent {
+  background: linear-gradient(135deg, var(--gold-l), var(--gold), var(--gold-d));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.hero-sub {
+  font-size: clamp(10px,2vw,13px);
+  color: var(--gold-d);
+  letter-spacing: 6px; text-transform: uppercase;
+  margin-bottom: 22px;
+  font-weight: 400;
+}
+
+.hero-desc {
+  max-width: 580px; margin: 0 auto 40px;
+  color: var(--text-2);
+  font-size: clamp(14px,2vw,17px);
+  line-height: 1.75; font-weight: 300;
+}
+.hero-desc strong { color: var(--text); font-weight: 600; }
+
+/* CTA row */
+.hero-ctas {
+  display: flex; gap: 12px;
+  justify-content: center; flex-wrap: wrap;
+  margin-bottom: 56px;
+}
+
+/* Stats row */
+.hero-stats {
+  display: flex; justify-content: center; gap: 0;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  max-width: 600px; margin: 0 auto;
+}
+.hstat {
+  flex: 1; padding: 16px 12px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+}
+.hstat:last-child { border-right: none; }
+.hstat::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--acc, var(--gold));
+  opacity: 0.6;
+}
+.hstat-v {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--gold); display: block; margin-bottom: 3px;
+}
+.hstat-l {
+  font-size: 9px; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .25s;
+  text-decoration: none;
+  font-family: 'Space Grotesk', sans-serif;
+  position: relative; overflow: hidden;
+  white-space: nowrap;
+  border: none;
+}
+.btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  opacity: 0; transition: opacity .25s;
+}
+.btn:hover::before { opacity: 1; }
+.btn:hover { transform: translateY(-2px); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-l), var(--gold));
+  color: #080808;
+  box-shadow: 0 8px 32px rgba(201,168,76,0.3), 0 2px 8px rgba(0,0,0,0.3);
+}
+.btn-primary:hover {
+  box-shadow: 0 12px 40px rgba(201,168,76,0.4), 0 2px 8px rgba(0,0,0,0.3);
+}
+.btn-secondary {
+  background: var(--glass-2);
+  border: 1px solid var(--border-g);
+  color: var(--gold-l);
+  backdrop-filter: blur(10px);
+}
+.btn-secondary:hover {
+  background: var(--gold-bg);
+  box-shadow: 0 0 24px rgba(201,168,76,0.1);
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.btn-ghost:hover { border-color: var(--border-g); color: var(--gold-l); }
+.btn-lg { padding: 16px 32px; font-size: 15px; border-radius: var(--r); }
+
+/* ── SECTION ── */
+.sec {
+  padding: 80px 20px;
+  max-width: 1160px; margin: 0 auto;
+  position: relative; z-index: 1;
+}
+.sec-label {
+  font-size: 10px; font-weight: 700;
+  color: var(--gold-d); letter-spacing: 4px;
+  text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sec-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--gold-d), transparent);
+}
+.sec-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px,4vw,48px);
+  color: var(--text); margin-bottom: 10px;
+  line-height: 1.1; letter-spacing: -0.5px;
+}
+.sec-title span { color: var(--gold); }
+.sec-desc {
+  color: var(--text-2); font-size: 15px;
+  font-weight: 300; max-width: 520px;
+  line-height: 1.7;
+}
+
+/* ── GLASSMORPHISM CARD ── */
+.glass-card {
+  background: rgba(13,13,24,0.7);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative; overflow: hidden;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+}
+.glass-card:hover {
+  border-color: rgba(201,168,76,0.25);
+  box-shadow: var(--glow-gold);
+  transform: translateY(-4px);
+}
+.glass-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── MODULE CARDS ── */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+.module-card {
+  display: flex; flex-direction: column;
+  padding: 28px;
+  text-decoration: none; color: var(--text);
+}
+.mc-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 20px;
+}
+.mc-icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  background: var(--icon-bg, rgba(201,168,76,0.1));
+  border: 1px solid var(--icon-border, rgba(201,168,76,0.2));
+}
+.mc-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 9px; font-weight: 700;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-3); letter-spacing: 1px;
+}
+.mc-badge.live {
+  background: rgba(16,185,129,0.1);
+  border-color: rgba(16,185,129,0.3);
+  color: var(--green);
+}
+.mc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; color: var(--text);
+  margin-bottom: 8px; letter-spacing: -0.3px;
+}
+.mc-desc {
+  font-size: 13px; color: var(--text-2);
+  line-height: 1.7; flex: 1; margin-bottom: 20px;
+  font-weight: 300;
+}
+.mc-tokens { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.mc-token {
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 500;
+  background: var(--gold-bg);
+  border: 1px solid var(--border-g);
+  color: var(--gold-d);
+}
+.mc-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.mc-cta {
+  font-size: 12px; font-weight: 700;
+  color: var(--gold-l);
+  display: flex; align-items: center; gap: 6px;
+}
+.mc-arrow {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--gold-bg);
+  border: 1px solid var(--border-g);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--gold);
+  transition: all .2s;
+}
+.module-card:hover .mc-arrow {
+  background: var(--gold);
+  color: #080808;
+}
+
+/* TOP MODULE (featured) */
+.module-card-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
+  min-height: 200px;
+}
+.mcf-left {
+  padding: 36px;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+}
+.mcf-right {
+  padding: 36px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.04), transparent);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.mcf-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.mcf-stat {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px;
+}
+.mcf-stat-v {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px; color: var(--gold); font-weight: 500;
+  display: block; margin-bottom: 3px;
+}
+.mcf-stat-l { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── WHY SECTION ── */
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; margin-top: 36px; }
+.why-card {
+  padding: 20px;
+  border-radius: var(--r);
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  transition: all .25s;
+}
+.why-card:hover { border-color: var(--border-g); background: var(--gold-bg); }
+.why-ico { font-size: 22px; margin-bottom: 10px; }
+.why-t { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.why-d { font-size: 12px; color: var(--text-2); line-height: 1.6; font-weight: 300; }
+
+/* ── TOKENS ── */
+.tokens-rail {
+  display: flex; gap: 10px;
+  flex-wrap: wrap; justify-content: center;
+  margin-top: 36px;
+}
+.token-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px;
+  background: rgba(13,13,24,0.8);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  backdrop-filter: blur(20px);
+  min-width: 180px;
+  transition: all .25s;
+}
+.token-card:hover { border-color: var(--border-g); box-shadow: 0 0 24px rgba(201,168,76,0.1); }
+.token-orb {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--tok-color, var(--gold-bg));
+  border: 1px solid var(--tok-border, var(--border-g));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  flex-shrink: 0;
+  box-shadow: 0 0 16px var(--tok-glow, rgba(201,168,76,0.1));
+}
+.tc-sym { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold); font-weight: 600; margin-bottom: 2px; }
+.tc-name { font-size: 10px; color: var(--text-3); }
+
+/* ── DIASPORA ── */
+.diaspora-block {
+  background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(14,165,233,0.04) 100%);
+  border: 1px solid var(--border-g);
+  border-radius: var(--r-xl);
+  padding: 52px 44px;
+  position: relative; overflow: hidden;
+  margin: 0 20px;
+  max-width: 1120px;
+  margin: 0 auto 80px;
+}
+.diaspora-block::before {
+  content: '';
+  position: absolute; top: -100px; right: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%);
+  pointer-events: none;
+}
+.diaspora-block::after {
+  content: '🌍';
+  position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+  font-size: 100px; opacity: 0.06; pointer-events: none;
+}
+.dia-inner { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+.dia-label {
+  font-size: 9px; font-weight: 700; color: var(--gold-d);
+  letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.dia-title { font-family: 'Playfair Display', serif; font-size: clamp(24px,3vw,36px); color: var(--text); margin-bottom: 12px; line-height: 1.2; }
+.dia-desc { color: var(--text-2); font-size: 14px; font-weight: 300; line-height: 1.7; margin-bottom: 24px; max-width: 500px; }
+.dia-stats { display: flex; flex-direction: column; gap: 10px; min-width: 180px; }
+.dia-stat {
+  background: rgba(0,0,8,0.4);
+  border: 1px solid var(--border-g);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+.ds-v { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); display: block; margin-bottom: 3px; }
+.ds-l { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── CTA FINAL ── */
+.cta-section {
+  padding: 100px 20px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,0.06), transparent 70%);
+  pointer-events: none;
+}
+.cta-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px,5vw,52px); color: var(--text); margin-bottom: 14px; position: relative; }
+.cta-section h2 span { color: var(--gold); }
+.cta-section p { color: var(--text-2); font-size: 15px; font-weight: 300; margin-bottom: 36px; max-width: 440px; margin-left: auto; margin-right: auto; line-height: 1.7; position: relative; }
+
+/* ── FOOTER ── */
+.footer-wrap {
+  border-top: 1px solid var(--border);
+  padding: 48px 20px 32px;
+  position: relative; z-index: 1;
+}
+.footer-inner { max-width: 1160px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer-brand-block .fb-name { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); margin-bottom: 6px; }
+.footer-brand-block .fb-tag { font-size: 9px; color: var(--gold-d); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+.footer-brand-block .fb-desc { font-size: 12px; color: var(--text-3); line-height: 1.6; font-weight: 300; }
+.footer-col h4 { font-size: 11px; font-weight: 700; color: var(--text-2); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.footer-col a { display: block; font-size: 12px; color: var(--text-3); text-decoration: none; margin-bottom: 8px; transition: color .2s; }
+.footer-col a:hover { color: var(--gold-l); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 24px; border-top: 1px solid var(--border);
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 11px; color: var(--text-3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+.footer-network {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; color: var(--text-3);
+  font-family: 'JetBrains Mono', monospace;
+}
+.network-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+/* ── TOAST ── */
+.toast-c { position: fixed; right: 16px; bottom: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: min(340px,calc(100vw - 32px)); }
+.toast {
+  padding: 12px 16px; border-radius: var(--r-sm);
+  backdrop-filter: blur(20px);
+  font-size: 12px; font-weight: 500;
+  animation: toastIn .25s ease;
+  border: 1px solid var(--border);
+  background: rgba(13,13,24,0.95);
+}
+.toast.success { border-color: rgba(16,185,129,0.4); color: #6EE7B7; }
+.toast.error { border-color: rgba(239,68,68,0.4); color: #FCA5A5; }
+.toast.info { border-color: var(--border-g); color: var(--gold-l); }
+@keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+.loader { display:inline-block;width:11px;height:11px;border:1.5px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px }
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px; max-width: 1160px; margin: 0 auto;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+@media(max-width:900px){
+  .module-card-featured { grid-template-columns:1fr; }
+  .mcf-left { border-right:none; border-bottom:1px solid var(--border); }
+  .dia-inner { grid-template-columns:1fr; }
+  .dia-stats { flex-direction:row; min-width:auto; }
+  .footer-top { grid-template-columns:1fr 1fr; gap:28px; }
+}
+@media(max-width:600px){
+  .lang-pills .lp:not(.act):not([id="lbFR"]):not([id="lbEN"]) { display:none; }
+  .lang-div { display:none; }
+  .footer-top { grid-template-columns:1fr; }
+  .hero-stats { flex-wrap:wrap; }
+  .hstat { min-width:45%; }
+  .modules-grid { grid-template-columns:1fr; }
+  .dia-stats { flex-direction:column; }
+  .diaspora-block { padding:32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo-ring"><span>GTC</span></div>
+    <div>
+      <div class="tb-name">GeoTerraChain QFS</div>
+      <div class="tb-tag">Pi Network · UEMOA</div>
+    </div>
+  </div>
+
+  <div class="lang-pills">
+    <button class="lp act" id="lbFR" onclick="setLang('fr',this)">🇫🇷 FR</button>
+    <button class="lp" id="lbEN" onclick="setLang('en',this)">🇬🇧 EN</button>
+    <div class="lang-div"></div>
+    <button class="lp" id="lbAR" onclick="setLang('ar',this)">🇲🇦 AR</button>
+    <button class="lp" id="lbWO" onclick="setLang('wo',this)">🇸🇳 WO</button>
+    <button class="lp" id="lbHA" onclick="setLang('ha',this)">🇳🇬 HA</button>
+    <button class="lp" id="lbBM" onclick="setLang('bm',this)">🇲🇱 BM</button>
+    <button class="lp" id="lbYO" onclick="setLang('yo',this)">🇳🇬 YO</button>
+    <button class="lp" id="lbSW" onclick="setLang('sw',this)">🇰🇪 SW</button>
+  </div>
+
+  <div class="pi-btn" id="piConnect">
+    <span class="pi-pulse"></span>
+    <span id="piLabel">π Connect</span>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker" style="margin-top:56px;">
+  <div class="ticker-inner" id="tickerInner"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span id="txt-badge">Pi Network · Stellar · RWA · UEMOA · Phase Pilote</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="ht-main" id="txt-h1a">Notre Terre.</span>
+      <span class="ht-accent" id="txt-h1b">Notre Richesse.</span>
+    </h1>
+    <div class="hero-sub" id="txt-sub">GeoTerraChain QFS — Panafrican Quantum Financial System</div>
+    <p class="hero-desc" id="txt-desc">
+      Première plateforme panafricaine de <strong>tokenisation d'actifs réels</strong> sur Pi Network.
+      Foncier, agriculture, élevage, coopératives UEMOA — certifiés blockchain, accessibles à tous les Pioneers.
+    </p>
+    <div class="hero-ctas">
+      <a href="tokenisation-testnet.html" class="btn btn-primary btn-lg">
+        <span>◈</span> <span id="txt-cta1">Tokeniser un actif</span>
+      </a>
+      <a href="pioneer.html" class="btn btn-secondary btn-lg">
+        <span>👤</span> <span id="txt-cta2">Mon espace Pioneer</span>
+      </a>
+      <a href="terraimmo.html" class="btn btn-ghost btn-lg">
+        <span>🧩</span> <span id="txt-cta3">Fractions disponibles</span>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat" style="--acc:var(--gold)">
+        <span class="hstat-v">5</span>
+        <span class="hstat-l" id="txt-s1">Modules actifs</span>
+      </div>
+      <div class="hstat" style="--acc:var(--cyan)">
+        <span class="hstat-v">GTCπ</span>
+        <span class="hstat-l" id="txt-s2">Token natif</span>
+      </div>
+      <div class="hstat" style="--acc:var(--green)">
+        <span class="hstat-v">8</span>
+        <span class="hstat-l" id="txt-s3">Langues</span>
+      </div>
+      <div class="hstat" style="--acc:var(--purple)">
+        <span class="hstat-v">UEMOA</span>
+        <span class="hstat-l" id="txt-s4">Zone ancrage</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MODULES -->
+<section class="sec">
+  <div class="sec-label" id="txt-mod-label">Modules de la plateforme</div>
+  <div class="sec-title" id="txt-mod-title">Un écosystème <span>complet</span></div>
+  <p class="sec-desc" id="txt-mod-desc">Chaque module est une brique indépendante — tokenisation, immobilier, élevage, coopératives, gouvernance.</p>
+
+  <div class="modules-grid">
+
+    <!-- FEATURED -->
+    <a href="tokenisation-testnet.html" class="glass-card module-card-featured" style="text-decoration:none;color:var(--text);">
+      <div class="mcf-left">
+        <div class="mc-top" style="margin-bottom:16px;">
+          <div class="mc-icon-wrap" style="--icon-bg:rgba(201,168,76,0.1);--icon-border:rgba(201,168,76,0.25);">◈</div>
+          <span class="mc-badge live">● LIVE</span>
+        </div>
+        <div class="mc-title" style="font-size:24px;" id="txt-m1t">Tokenisation Foncière</div>
+        <p class="mc-desc" id="txt-m1d">Transformez votre terrain, champ ou bien immobilier en token GTCπ certifié sur Stellar. 7 étapes guidées, paiement Pi natif, burn déflationnaire automatique.</p>
+        <div class="mc-tokens">
+          <span class="mc-token">GeoNFT</span><span class="mc-token">GeoLedger</span>
+          <span class="mc-token">Pi SDK 2.0</span><span class="mc-token">Soroban</span>
+        </div>
+        <div class="mc-footer">
+          <span class="mc-cta"><span id="txt-m1c">Tokeniser maintenant</span><span class="mc-arrow">→</span></span>
+          <span style="font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;">Testnet actif</span>
+        </div>
+      </div>
+      <div class="mcf-right">
+        <div style="font-size:10px;color:var(--gold-d);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Métriques · Testnet</div>
+        <div class="mcf-stats">
+          <div class="mcf-stat"><span class="mcf-stat-v">0.001 π</span><span class="mcf-stat-l">Frais émission</span></div>
+          <div class="mcf-stat"><span class="mcf-stat-v">0.5%</span><span class="mcf-stat-l">Burn GTCπ</span></div>
+          <div class="mcf-stat"><span class="mcf-stat-v">7</span><span class="mcf-stat-l">Étapes</span></div>
+          <div class="mcf-stat"><span class="mcf-stat-v">Stellar</span><span class="mcf-stat-l">Blockchain</span></div>
+        </div>
+        <div style="margin-top:14px;padding:10px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:8px;font-size:11px;color:#6EE7B7;font-family:'JetBrains Mono',monospace;">
+          ✓ Paiement confirmé sur wallet.pinet.com<br>
+          ✓ Token GTCπ émis (Testnet)<br>
+          ✓ TX Stellar validé
+        </div>
+      </div>
+    </a>
+
+    <!-- TERRAIMMO -->
+    <a href="terraimmo.html" class="glass-card module-card" style="--icon-bg:rgba(14,165,233,0.08);--icon-border:rgba(14,165,233,0.2);text-decoration:none;color:var(--text);">
+      <div class="mc-top">
+        <div class="mc-icon-wrap">🏘️</div>
+        <span class="mc-badge live">● LIVE</span>
+      </div>
+      <div class="mc-title" id="txt-m2t">TerraImmo</div>
+      <p class="mc-desc" id="txt-m2d">Immobilier et élevage fractionné. Investissez dès 1 Pi dans des terres, maisons, troupeaux, pisciculture, myciculture (Volvariella volvacea), raniculture.</p>
+      <div class="mc-tokens">
+        <span class="mc-token">ImmoπCI</span><span class="mc-token">AgroPi</span><span class="mc-token">Fractions</span>
+      </div>
+      <div class="mc-footer">
+        <span class="mc-cta" id="txt-m2c">Voir les biens <span class="mc-arrow">→</span></span>
+        <span style="font-size:10px;color:var(--text-3);">9 types d'actifs</span>
+      </div>
+    </a>
+
+    <!-- COOPERATIVES -->
+    <a href="cooperatives.html" class="glass-card module-card" style="--icon-bg:rgba(16,185,129,0.08);--icon-border:rgba(16,185,129,0.2);text-decoration:none;color:var(--text);">
+      <div class="mc-top">
+        <div class="mc-icon-wrap" style="font-size:20px;">🤝</div>
+        <span class="mc-badge live">● LIVE</span>
+      </div>
+      <div class="mc-title" id="txt-m3t">Coopératives UEMOA</div>
+      <p class="mc-desc" id="txt-m3d">Créez ou rejoignez une coopérative agricole. Parts sociales GTCπ tokenisées, gouvernance on-chain avec votes horodatés, distribution automatique des revenus.</p>
+      <div class="mc-tokens">
+        <span class="mc-token">GTCπ</span><span class="mc-token">Votes DAO</span><span class="mc-token">Revenus Pi</span>
+      </div>
+      <div class="mc-footer">
+        <span class="mc-cta" id="txt-m3c">Explorer <span class="mc-arrow">→</span></span>
+        <span style="font-size:10px;color:var(--text-3);">10 types</span>
+      </div>
+    </a>
+
+    <!-- PIONEER -->
+    <a href="pioneer.html" class="glass-card module-card" style="--icon-bg:rgba(123,92,240,0.08);--icon-border:rgba(123,92,240,0.2);text-decoration:none;color:var(--text);">
+      <div class="mc-top">
+        <div class="mc-icon-wrap" style="font-size:20px;">👤</div>
+        <span class="mc-badge live">● LIVE</span>
+      </div>
+      <div class="mc-title" id="txt-m4t">Espace Pioneer</div>
+      <p class="mc-desc" id="txt-m4d">Tableau de bord personnel. Parcelles GeoLedger, fractions ImmoπCI, coopératives, transactions Stellar, revenus distribués. Module Diaspora intégré.</p>
+      <div class="mc-tokens">
+        <span class="mc-token">Dashboard</span><span class="mc-token">Diaspora</span><span class="mc-token">Portfolio</span>
+      </div>
+      <div class="mc-footer">
+        <span class="mc-cta" id="txt-m4c">Mon espace <span class="mc-arrow">→</span></span>
+        <span style="font-size:10px;color:var(--text-3);">7 onglets</span>
+      </div>
+    </a>
+
+    <!-- GUIDE -->
+    <a href="guide-aide-geoterrachain-qfs.html" class="glass-card module-card" style="--icon-bg:rgba(201,168,76,0.06);--icon-border:rgba(201,168,76,0.15);text-decoration:none;color:var(--text);">
+      <div class="mc-top">
+        <div class="mc-icon-wrap" style="font-size:20px;">🤖</div>
+        <span class="mc-badge">GeoTerra AI</span>
+      </div>
+      <div class="mc-title" id="txt-m5t">Guide & GeoTerra AI</div>
+      <p class="mc-desc" id="txt-m5d">Assistant IA officiel avec Knowledge Engine. Réponses instantanées sur la tokenisation, GTCπ, les coopératives, le foncier OHADA et Pi Network.</p>
+      <div class="mc-tokens">
+        <span class="mc-token">FAQ</span><span class="mc-token">AI Chat</span><span class="mc-token">OHADA</span>
+      </div>
+      <div class="mc-footer">
+        <span class="mc-cta" id="txt-m5c">Accéder <span class="mc-arrow">→</span></span>
+        <span style="font-size:10px;color:var(--text-3);">Réponses maîtrisées</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHY -->
+<section class="sec">
+  <div class="sec-label" id="txt-why-label">Différenciateurs</div>
+  <div class="sec-title" id="txt-why-title">Pourquoi <span>GeoTerraChain QFS</span> ?</div>
+  <p class="sec-desc" id="txt-why-desc">L'infrastructure manquante entre les actifs africains réels et la blockchain.</p>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-ico">π</div><div class="why-t" id="txt-w1t">Pi Network Natif</div><div class="why-d" id="txt-w1d">Auth Pi, paiements Pi natifs, KYC Pi intégré. Accès 60M+ Pioneers vérifiés mondialement.</div></div>
+    <div class="why-card"><div class="why-ico">🌍</div><div class="why-t" id="txt-w2t">Actifs Réels (RWA)</div><div class="why-d" id="txt-w2d">Zéro spéculation. Chaque token représente un actif réel vérifiable — terrain GPS, élevage, coopérative OHADA.</div></div>
+    <div class="why-card"><div class="why-ico">⛓️</div><div class="why-t" id="txt-w3t">Stellar Soroban</div><div class="why-d" id="txt-w3d">Smart contracts natifs Pi. Émission ImmoπCI, AgroPi. GeoLedger immuable. IPFS + Arweave permanence.</div></div>
+    <div class="why-card"><div class="why-ico">⚖️</div><div class="why-t" id="txt-w4t">Conforme OHADA</div><div class="why-d" id="txt-w4d">Droit foncier CI, ANADER, BCEAO. GeoNFT complémentaire au titre foncier officiel, non substitutif.</div></div>
+    <div class="why-card"><div class="why-ico">🧩</div><div class="why-t" id="txt-w5t">Fractionnement 1 Pi</div><div class="why-d" id="txt-w5d">Démocratisation du foncier africain. Diaspora, petits épargnants, coopératives — tous peuvent investir.</div></div>
+    <div class="why-card"><div class="why-ico">🌐</div><div class="why-t" id="txt-w6t">8 Langues Africaines</div><div class="why-d" id="txt-w6d">FR · EN · AR (RTL) · Wolof · Haoussa · Bambara · Yoruba · Swahili. Interface adaptée aux peuples africains.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOKENS -->
+<section class="sec" style="text-align:center;">
+  <div class="sec-label" style="justify-content:center;text-align:left;" id="txt-tok-label">Écosystème tokenomics</div>
+  <div class="sec-title" id="txt-tok-title">5 tokens utilitaires <span>réels</span></div>
+  <p class="sec-desc" style="margin:0 auto 0;" id="txt-tok-desc">Burn déflationnaire 0,5% GTCπ · Stellar Testnet · Soroban smart contracts</p>
+  <div class="tokens-rail">
+    <div class="token-card" style="--tok-color:rgba(201,168,76,0.08);--tok-border:rgba(201,168,76,0.25);--tok-glow:rgba(201,168,76,0.12);">
+      <div class="token-orb">π</div>
+      <div><div class="tc-sym">GTCπ</div><div class="tc-name" id="txt-t1">Gouvernance · 3 141 592</div></div>
+    </div>
+    <div class="token-card" style="--tok-color:rgba(14,165,233,0.08);--tok-border:rgba(14,165,233,0.2);--tok-glow:rgba(14,165,233,0.1);">
+      <div class="token-orb" style="color:var(--cyan);">🏘</div>
+      <div><div class="tc-sym">ImmoπCI</div><div class="tc-name" id="txt-t2">Immobilier · Foncier CI</div></div>
+    </div>
+    <div class="token-card" style="--tok-color:rgba(16,185,129,0.08);--tok-border:rgba(16,185,129,0.2);--tok-glow:rgba(16,185,129,0.1);">
+      <div class="token-orb" style="color:var(--green);">🌾</div>
+      <div><div class="tc-sym">AgroPi</div><div class="tc-name" id="txt-t3">Agriculture · Élevage</div></div>
+    </div>
+    <div class="token-card">
+      <div class="token-orb">📍</div>
+      <div><div class="tc-sym">LandPi</div><div class="tc-name" id="txt-t4">Cadastre · GeoLedger</div></div>
+    </div>
+    <div class="token-card" style="--tok-color:rgba(245,158,11,0.08);--tok-border:rgba(245,158,11,0.2);--tok-glow:rgba(245,158,11,0.1);">
+      <div class="token-orb" style="color:var(--orange);">☀️</div>
+      <div><div class="tc-sym">SolarPi</div><div class="tc-name" id="txt-t5">Énergie · Irrigation</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DIASPORA -->
+<section class="sec">
+  <div class="diaspora-block">
+    <div class="dia-inner">
+      <div>
+        <div class="dia-label">
+          <span class="badge-dot" style="box-shadow:0 0 6px var(--gold);"></span>
+          <span id="txt-dia-label">Diaspora Africaine</span>
+        </div>
+        <div class="dia-title" id="txt-dia-title">Investissez dans vos racines<br><span style="color:var(--gold);">depuis n'importe où.</span></div>
+        <p class="dia-desc" id="txt-dia-desc">$2,7 milliards envoyés chaque année vers la Côte d'Ivoire. Transformez vos transferts en investissements productifs tokenisés — terres, élevages, coopératives. Vos revenus en Pi, vos actifs en Afrique.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="pioneer.html" class="btn btn-primary" id="txt-dia-btn1">💰 Investir depuis l'étranger</a>
+          <a href="cooperatives.html" class="btn btn-secondary" id="txt-dia-btn2">🤝 Rejoindre une coopérative</a>
+        </div>
+      </div>
+      <div class="dia-stats">
+        <div class="dia-stat"><span class="ds-v">$2,7B</span><span class="ds-l" id="txt-ds1">Envois diaspora CI/an</span></div>
+        <div class="dia-stat"><span class="ds-v">2,3M</span><span class="ds-l" id="txt-ds2">Ivoiriens à l'étranger</span></div>
+        <div class="dia-stat"><span class="ds-v">1 π</span><span class="ds-l" id="txt-ds3">Mise minimum</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <h2 id="txt-fin-title">Rejoignez l'écosystème <span>GeoTerraChain</span></h2>
+  <p id="txt-fin-desc">Connectez-vous avec Pi Network et tokenisez votre premier actif en moins de 10 minutes. Pi SDK 2.0 · Stellar Testnet actif.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;">
+    <a href="tokenisation-testnet.html" class="btn btn-primary btn-lg">◈ <span id="txt-fin-cta1">Tokeniser mon actif</span></a>
+    <a href="guide-aide-geoterrachain-qfs.html" class="btn btn-ghost btn-lg">🤖 <span id="txt-fin-cta2">Parler à GeoTerra AI</span></a>
+  </div>
+  <p style="margin-top:20px;font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;position:relative;" id="txt-fin-note">Plateforme en phase pilote · Pi SDK 2.0 ✓ · Stellar Testnet · © 2026 GeoTerraChain QFS</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-wrap">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <div class="fb-name">GeoTerraChain QFS</div>
+        <div class="fb-tag" id="txt-ft-tag">Notre Terre · Notre Richesse</div>
+        <p class="fb-desc" id="txt-ft-desc">Plateforme panafricaine de tokenisation d'actifs réels sur Pi Network et Stellar.</p>
+      </div>
+      <div class="footer-col">
+        <h4 id="txt-fc1h">Plateforme</h4>
+        <a href="tokenisation-testnet.html" id="txt-fc1a">Tokeniser</a>
+        <a href="terraimmo.html" id="txt-fc1b">TerraImmo</a>
+        <a href="cooperatives.html" id="txt-fc1c">Coopératives</a>
+        <a href="pioneer.html" id="txt-fc1d">Mon espace</a>
+      </div>
+      <div class="footer-col">
+        <h4 id="txt-fc2h">Ressources</h4>
+        <a href="guide-aide-geoterrachain-qfs.html" id="txt-fc2a">Guide & FAQ</a>
+        <a href="guide-aide-geoterrachain-qfs.html" id="txt-fc2b">GeoTerra AI</a>
+        <a href="tokenisation-testnet.html" id="txt-fc2c">Whitepaper</a>
+      </div>
+      <div class="footer-col">
+        <h4 id="txt-fc3h">Légal</h4>
+        <a href="privacy.html" id="txt-fc3a">Confidentialité</a>
+        <a href="termes.html" id="txt-fc3b">Conditions</a>
+        <a href="#" id="txt-fc3c">OHADA</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" id="txt-ft-copy">© 2026 GeoTerraChain QFS · Panafrican Quantum Financial System · Powered by Pi Network</span>
+      <div class="footer-network">
+        <span class="network-dot"></span>
+        <span id="txt-ft-net">Stellar Testnet · Pi SDK 2.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-c" id="toastC"></div>
+
+<script>
+/* ═══════════════════ TICKER ═══════════════════ */
+function buildTicker(){
+  const items=[
+    {n:'GTCπ',v:'1.000 π',c:'+0.00%'},
+    {n:'ImmoπCI',v:'Testnet',c:'Stellar'},
+    {n:'AgroPi',v:'Actif',c:''},
+    {n:'Pi Network',v:'Mainnet',c:'En attente'},
+    {n:'COOPRIZ Songon',v:'28 membres',c:'· 85M FCFA'},
+    {n:'Testnet TX',v:'a0dbcef9…',c:'Confirmé ✓'},
+    {n:'GTCπ Burn',v:'0.5%',c:'par tx foncière'},
+    {n:'Stellar',v:'Soroban',c:'Smart Contracts'},
+    {n:'KYC Pi',v:'60M+',c:'Pioneers'},
+    {n:'OHADA',v:'Conforme',c:'CI · UEMOA'},
+    {n:'Diaspora',v:'$2.7B/an',c:'CI envois'},
+    {n:'GeoTerra AI',v:'Actif',c:'Knowledge Engine'},
+  ];
+  const inner=document.getElementById('tickerInner');
+  const html=items.map(i=>`
+    <span class="tick-item">
+      <span class="tick-name">${i.n}</span>
+      <span class="tick-val">${i.v}</span>
+      ${i.c?`<span class="tick-up">${i.c}</span>`:''}
+    </span>
+    <span class="tick-dot"></span>
+  `).join('');
+  inner.innerHTML=html+html; // doubled for seamless loop
+}
+buildTicker();
+
+/* ═══════════════════ TRANSLATIONS ═══════════════════ */
+const T={
+fr:{badge:'Pi Network · Stellar · RWA · UEMOA · Phase Pilote',h1a:'Notre Terre.',h1b:'Notre Richesse.',sub:'GeoTerraChain QFS — Panafrican Quantum Financial System',desc:'Première plateforme panafricaine de <strong>tokenisation d\'actifs réels</strong> sur Pi Network. Foncier, agriculture, élevage, coopératives UEMOA — certifiés blockchain.',cta1:'Tokeniser un actif',cta2:'Mon espace Pioneer',cta3:'Fractions disponibles',s1:'Modules actifs',s2:'Token natif',s3:'Langues',s4:'Zone ancrage',modLabel:'Modules de la plateforme',modTitle:'Un écosystème <span>complet</span>',modDesc:'Chaque module est une brique indépendante — tokenisation, immobilier, élevage, coopératives, gouvernance.',m1t:'Tokenisation Foncière',m1d:'Transformez votre terrain, champ ou bien immobilier en token GTCπ certifié sur Stellar. 7 étapes guidées, paiement Pi natif.',m1c:'Tokeniser maintenant',m2t:'TerraImmo',m2d:'Immobilier et élevage fractionné. Investissez dès 1 Pi dans des terres, maisons, troupeaux, pisciculture, myciculture (Volvariella volvacea).',m2c:'Voir les biens',m3t:'Coopératives UEMOA',m3d:'Créez ou rejoignez une coopérative agricole. Parts GTCπ tokenisées, gouvernance on-chain, distribution automatique des revenus.',m3c:'Explorer',m4t:'Espace Pioneer',m4d:'Tableau de bord personnel. Parcelles GeoLedger, fractions ImmoπCI, coopératives, transactions Stellar. Module Diaspora intégré.',m4c:'Mon espace',m5t:'Guide & GeoTerra AI',m5d:'Assistant IA officiel. Réponses instantanées sur la tokenisation, GTCπ, foncier OHADA et Pi Network.',m5c:'Accéder',whyLabel:'Différenciateurs',whyTitle:'Pourquoi <span>GeoTerraChain QFS</span> ?',whyDesc:'L\'infrastructure manquante entre les actifs africains réels et la blockchain.',w1t:'Pi Network Natif',w1d:'Auth Pi, paiements Pi natifs, KYC intégré. 60M+ Pioneers vérifiés.',w2t:'Actifs Réels (RWA)',w2d:'Zéro spéculation. Chaque token = actif réel vérifiable GPS.',w3t:'Stellar Soroban',w3d:'Smart contracts natifs Pi. ImmoπCI, AgroPi. GeoLedger immuable.',w4t:'Conforme OHADA',w4d:'Droit foncier CI, ANADER, BCEAO. GeoNFT complémentaire.',w5t:'Fractionnement 1 Pi',w5d:'Démocratisation foncière africaine. Diaspora, épargnants, coopératives.',w6t:'8 Langues Africaines',w6d:'FR · EN · AR · Wolof · Haoussa · Bambara · Yoruba · Swahili.',tokLabel:'Écosystème tokenomics',tokTitle:'5 tokens utilitaires <span>réels</span>',tokDesc:'Burn déflationnaire 0,5% GTCπ · Stellar Testnet · Soroban smart contracts',t1:'Gouvernance · 3 141 592',t2:'Immobilier · Foncier CI',t3:'Agriculture · Élevage',t4:'Cadastre · GeoLedger',t5:'Énergie · Irrigation',diaLabel:'Diaspora Africaine',diaTitle:'Investissez dans vos racines<br><span style="color:var(--gold)">depuis n\'importe où.</span>',diaDesc:'$2,7 milliards envoyés chaque année vers la Côte d\'Ivoire. Transformez vos transferts en investissements productifs tokenisés.',diaBtn1:'💰 Investir depuis l\'étranger',diaBtn2:'🤝 Rejoindre une coopérative',ds1:'Envois diaspora CI/an',ds2:'Ivoiriens à l\'étranger',ds3:'Mise minimum',finTitle:'Rejoignez l\'écosystème <span>GeoTerraChain</span>',finDesc:'Connectez-vous avec Pi Network et tokenisez votre premier actif en moins de 10 minutes.',finCta1:'Tokeniser mon actif',finCta2:'Parler à GeoTerra AI',finNote:'Plateforme en phase pilote · Pi SDK 2.0 ✓ · Stellar Testnet · © 2026',ftTag:'Notre Terre · Notre Richesse',ftDesc:'Plateforme panafricaine de tokenisation d\'actifs réels sur Pi Network et Stellar.',fc1h:'Plateforme',fc1a:'Tokeniser',fc1b:'TerraImmo',fc1c:'Coopératives',fc1d:'Mon espace',fc2h:'Ressources',fc2a:'Guide & FAQ',fc2b:'GeoTerra AI',fc2c:'Whitepaper',fc3h:'Légal',fc3a:'Confidentialité',fc3b:'Conditions',fc3c:'OHADA',ftCopy:'© 2026 GeoTerraChain QFS · Panafrican Quantum Financial System · Powered by Pi Network',ftNet:'Stellar Testnet · Pi SDK 2.0',piLabel:'π Connect'},
+en:{badge:'Pi Network · Stellar · RWA · ECOWAS · Pilot Phase',h1a:'Our Land.',h1b:'Our Wealth.',sub:'GeoTerraChain QFS — Panafrican Quantum Financial System',desc:'First pan-African <strong>real-world asset tokenization</strong> platform on Pi Network. Land, agriculture, livestock, ECOWAS cooperatives — blockchain certified.',cta1:'Tokenize an asset',cta2:'My Pioneer space',cta3:'Available fractions',s1:'Active modules',s2:'Native token',s3:'Languages',s4:'Anchor zone',modLabel:'Platform modules',modTitle:'A <span>complete</span> ecosystem',modDesc:'Each module is an independent building block — tokenization, real estate, livestock, cooperatives, governance.',m1t:'Land Tokenization',m1d:'Turn your land, field or property into a GTCπ token certified on Stellar. 7 guided steps, native Pi payment, deflationary burn.',m1c:'Tokenize now',m2t:'TerraImmo',m2d:'Fractional real estate and livestock. Invest from 1 Pi in land, houses, cattle, fish farming, mushroom cultivation (Volvariella volvacea).',m2c:'View properties',m3t:'ECOWAS Cooperatives',m3d:'Create or join an agricultural cooperative. GTCπ shares tokenized, on-chain governance, automatic revenue distribution.',m3c:'Explore',m4t:'Pioneer Space',m4d:'Personal dashboard. GeoLedger parcels, ImmoπCI fractions, cooperatives, Stellar transactions. Diaspora module included.',m4c:'My space',m5t:'Guide & GeoTerra AI',m5d:'Official AI assistant. Instant answers on tokenization, GTCπ, OHADA land law and Pi Network.',m5c:'Access',whyLabel:'Key differentiators',whyTitle:'Why <span>GeoTerraChain QFS</span>?',whyDesc:'The missing infrastructure between real African assets and blockchain.',w1t:'Native Pi Network',w1d:'Pi auth, native Pi payments, integrated KYC. 60M+ verified Pioneers worldwide.',w2t:'Real Assets (RWA)',w2d:'Zero speculation. Each token represents a verifiable real asset — GPS land, livestock, OHADA cooperative.',w3t:'Stellar Soroban',w3d:'Pi native smart contracts. ImmoπCI, AgroPi issuance. Immutable GeoLedger.',w4t:'OHADA Compliant',w4d:'CI land law, ANADER, BCEAO. GeoNFT complements official land title.',w5t:'1 Pi Fractions',w5d:'Democratizing African land. Diaspora, savers, cooperatives — all can invest.',w6t:'8 African Languages',w6d:'FR · EN · AR · Wolof · Hausa · Bambara · Yoruba · Swahili.',tokLabel:'Token ecosystem',tokTitle:'5 <span>real</span> utility tokens',tokDesc:'0.5% GTCπ deflationary burn · Stellar Testnet · Soroban smart contracts',t1:'Governance · 3,141,592',t2:'Real estate · Land CI',t3:'Agriculture · Livestock',t4:'Cadastre · GeoLedger',t5:'Energy · Irrigation',diaLabel:'African Diaspora',diaTitle:'Invest in your roots<br><span style="color:var(--gold)">from anywhere.</span>',diaDesc:'$2.7 billion sent every year to Côte d\'Ivoire. Turn your remittances into productive tokenized investments — land, livestock, cooperatives.',diaBtn1:'💰 Invest from abroad',diaBtn2:'🤝 Join a cooperative',ds1:'Diaspora remittances CI/yr',ds2:'Ivorians abroad',ds3:'Minimum stake',finTitle:'Join the <span>GeoTerraChain</span> ecosystem',finDesc:'Log in with Pi Network and tokenize your first asset in under 10 minutes.',finCta1:'Tokenize my asset',finCta2:'Talk to GeoTerra AI',finNote:'Pilot phase · Pi SDK 2.0 ✓ · Stellar Testnet · © 2026',ftTag:'Our Land · Our Wealth',ftDesc:'Pan-African real-world asset tokenization platform on Pi Network and Stellar.',fc1h:'Platform',fc1a:'Tokenize',fc1b:'TerraImmo',fc1c:'Cooperatives',fc1d:'My space',fc2h:'Resources',fc2a:'Guide & FAQ',fc2b:'GeoTerra AI',fc2c:'Whitepaper',fc3h:'Legal',fc3a:'Privacy',fc3b:'Terms',fc3c:'OHADA',ftCopy:'© 2026 GeoTerraChain QFS · Panafrican Quantum Financial System · Powered by Pi Network',ftNet:'Stellar Testnet · Pi SDK 2.0',piLabel:'π Connect'},
+ar:{badge:'Pi Network · Stellar · RWA · UEMOA',h1a:'أرضنا.',h1b:'ثروتنا.',sub:'GeoTerraChain QFS — النظام المالي الكمي الأفريقي',desc:'أول منصة أفريقية <strong>لترميز الأصول الحقيقية</strong> على شبكة Pi.',cta1:'ترميز أصل',cta2:'فضائي Pioneer',cta3:'الأجزاء المتاحة',s1:'وحدات نشطة',s2:'رمز أصلي',s3:'لغات',s4:'UEMOA',modLabel:'وحدات المنصة',modTitle:'نظام <span>متكامل</span>',modDesc:'كل وحدة مستقلة — ترميز، عقارات، ثروة حيوانية، تعاونيات.',m1t:'ترميز الأراضي',m1d:'حوّل أرضك أو حقلك إلى رمز GTCπ معتمد على Stellar.',m1c:'ابدأ الترميز',m2t:'TerraImmo',m2d:'عقارات وثروة حيوانية مجزأة. استثمر من 1 Pi.',m2c:'عرض العقارات',m3t:'تعاونيات UEMOA',m3d:'أنشئ أو انضم إلى تعاونية زراعية. حوكمة على البلوكتشين.',m3c:'استكشاف',m4t:'فضاء Pioneer',m4d:'لوحة القيادة الشخصية. قطع، أسهم، معاملات، إيرادات.',m4c:'فضائي',m5t:'الدليل والذكاء الاصطناعي',m5d:'مساعد AI رسمي. إجابات فورية.',m5c:'الوصول',whyLabel:'المميزات',whyTitle:'لماذا <span>GeoTerraChain QFS</span>؟',whyDesc:'البنية التحتية المفقودة بين الأصول الأفريقية والبلوكتشين.',w1t:'Pi أصلي',w1d:'مصادقة Pi، مدفوعات Pi، KYC. 60M+.',w2t:'أصول حقيقية',w2d:'لا مضاربة. كل رمز = أصل حقيقي.',w3t:'Stellar Soroban',w3d:'عقود ذكية، ImmoπCI، AgroPi.',w4t:'OHADA',w4d:'قانون فوري CI، ANADER، BCEAO.',w5t:'1 Pi',w5d:'تجزئة ملكية الأراضي الأفريقية.',w6t:'8 لغات',w6d:'FR · EN · AR · Wolof · Haoussa · Bambara · Yoruba · Swahili.',tokLabel:'نظام الرموز',tokTitle:'5 <span>رموز</span> خدمية',tokDesc:'حرق انكماشي 0.5% GTCπ · Stellar Testnet',t1:'حوكمة · 3,141,592',t2:'عقارات CI',t3:'زراعة · ثروة حيوانية',t4:'مساحة',t5:'طاقة',diaLabel:'الشتات الأفريقي',diaTitle:'استثمر في جذورك<br><span style="color:var(--gold)">من أي مكان.</span>',diaDesc:'2.7 مليار دولار ترسل كل عام إلى كوت ديفوار. حوّل تحويلاتك إلى استثمارات.',diaBtn1:'💰 استثمر من الخارج',diaBtn2:'🤝 انضم إلى تعاونية',ds1:'تحويلات/سنة',ds2:'إيفواريون في الخارج',ds3:'الحد الأدنى',finTitle:'انضم إلى <span>GeoTerraChain</span>',finDesc:'سجّل الدخول بـ Pi وابدأ في أقل من 10 دقائق.',finCta1:'ترميز أصلي',finCta2:'GeoTerra AI',finNote:'مرحلة تجريبية · Pi SDK 2.0 ✓ · © 2026',ftTag:'أرضنا · ثروتنا',ftDesc:'منصة أفريقية لترميز الأصول الحقيقية على Pi.',fc1h:'المنصة',fc1a:'ترميز',fc1b:'TerraImmo',fc1c:'تعاونيات',fc1d:'فضائي',fc2h:'الموارد',fc2a:'الدليل',fc2b:'AI',fc2c:'Whitepaper',fc3h:'قانوني',fc3a:'الخصوصية',fc3b:'الشروط',fc3c:'OHADA',ftCopy:'© 2026 GeoTerraChain QFS · Powered by Pi Network',ftNet:'Stellar Testnet · Pi SDK 2.0',piLabel:'π اتصال'},
+};
+// Langues africaines simplifiées (Wolof, Haoussa, Bambara, Yoruba, Swahili) — version abrégée
+['wo','ha','bm','yo','sw'].forEach(l=>{
+  T[l]={...T.fr,
+    h1a:{wo:'Sunu Dëkk.',ha:'Ƙasarmu.',bm:'An Foro.',yo:'Ilẹ Wa.',sw:'Ardhi Yetu.'}[l],
+    h1b:{wo:'Sunu Doom.',ha:'Dukiyarmu.',bm:'An Nafolo.',yo:'Ọrọ Wa.',sw:'Utajiri Wetu.'}[l],
+    tagline:{wo:'SUNU DËKK · SUNU DOOM',ha:'ƘASARMU · DUKIYARMU',bm:'AN FORO · AN NAFOLO',yo:'ILẸ WA · ỌRỌ WA',sw:'ARDHI YETU · UTAJIRI WETU'}[l],
+    badge:'Pi Network · Stellar · RWA · UEMOA',
+    ftTag:{wo:'SUNU DËKK · SUNU DOOM',ha:'ƘASARMU · DUKIYARMU',bm:'AN FORO · AN NAFOLO',yo:'ILẸ WA · ỌRỌ WA',sw:'ARDHI YETU · UTAJIRI WETU'}[l],
+  };
+});
+
+let LANG='fr';
+function setLang(l,btn){
+  if(!T[l]) l='fr';
+  LANG=l;
+  document.querySelectorAll('.lp').forEach(b=>b.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+  const t=T[l];
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.documentElement.lang=l;
+  const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.innerHTML=v;};
+  s('txt-badge',t.badge);s('txt-h1a',t.h1a);s('txt-h1b',t.h1b);s('txt-sub',t.sub);s('txt-desc',t.desc);
+  s('txt-cta1',t.cta1);s('txt-cta2',t.cta2);s('txt-cta3',t.cta3);
+  s('txt-s1',t.s1);s('txt-s2',t.s2);s('txt-s3',t.s3);s('txt-s4',t.s4);
+  s('txt-mod-label',t.modLabel);s('txt-mod-title',t.modTitle);s('txt-mod-desc',t.modDesc);
+  s('txt-m1t',t.m1t);s('txt-m1d',t.m1d);s('txt-m1c',t.m1c);
+  s('txt-m2t',t.m2t);s('txt-m2d',t.m2d);s('txt-m2c',t.m2c);
+  s('txt-m3t',t.m3t);s('txt-m3d',t.m3d);s('txt-m3c',t.m3c);
+  s('txt-m4t',t.m4t);s('txt-m4d',t.m4d);s('txt-m4c',t.m4c);
+  s('txt-m5t',t.m5t);s('txt-m5d',t.m5d);s('txt-m5c',t.m5c);
+  s('txt-why-label',t.whyLabel);s('txt-why-title',t.whyTitle);s('txt-why-desc',t.whyDesc);
+  s('txt-w1t',t.w1t);s('txt-w1d',t.w1d);s('txt-w2t',t.w2t);s('txt-w2d',t.w2d);
+  s('txt-w3t',t.w3t);s('txt-w3d',t.w3d);s('txt-w4t',t.w4t);s('txt-w4d',t.w4d);
+  s('txt-w5t',t.w5t);s('txt-w5d',t.w5d);s('txt-w6t',t.w6t);s('txt-w6d',t.w6d);
+  s('txt-tok-label',t.tokLabel);s('txt-tok-title',t.tokTitle);s('txt-tok-desc',t.tokDesc);
+  s('txt-t1',t.t1);s('txt-t2',t.t2);s('txt-t3',t.t3);s('txt-t4',t.t4);s('txt-t5',t.t5);
+  s('txt-dia-label',t.diaLabel);s('txt-dia-title',t.diaTitle);s('txt-dia-desc',t.diaDesc);
+  s('txt-dia-btn1',t.diaBtn1);s('txt-dia-btn2',t.diaBtn2);
+  s('txt-ds1',t.ds1);s('txt-ds2',t.ds2);s('txt-ds3',t.ds3);
+  s('txt-fin-title',t.finTitle);s('txt-fin-desc',t.finDesc);
+  s('txt-fin-cta1',t.finCta1);s('txt-fin-cta2',t.finCta2);s('txt-fin-note',t.finNote);
+  s('txt-ft-tag',t.ftTag);s('txt-ft-desc',t.ftDesc);
+  s('txt-fc1h',t.fc1h);s('txt-fc1a',t.fc1a);s('txt-fc1b',t.fc1b);s('txt-fc1c',t.fc1c);s('txt-fc1d',t.fc1d);
+  s('txt-fc2h',t.fc2h);s('txt-fc2a',t.fc2a);s('txt-fc2b',t.fc2b);s('txt-fc2c',t.fc2c);
+  s('txt-fc3h',t.fc3h);s('txt-fc3a',t.fc3a);s('txt-fc3b',t.fc3b);s('txt-fc3c',t.fc3c);
+  s('txt-ft-copy',t.ftCopy);s('txt-ft-net',t.ftNet);s('piLabel',t.piLabel);
+  try{localStorage.setItem('gtcqfs_lang',l);}catch(e){}
+}
+
+/* PI CONNECT */
+function toast(msg,type='info'){const c=document.getElementById('toastC');const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),4000);}
+document.getElementById('piConnect').addEventListener('click',async()=>{
+  if(!window.Pi){toast('Ouvrez dans Pi Browser.','error');return;}
+  const el=document.getElementById('piConnect');
+  el.innerHTML='<span class="loader"></span>';
+  try{
+    const auth=await Pi.authenticate(['username'],p=>console.log(p));
+    el.innerHTML=`<span class="pi-pulse"></span><span>@${auth.user.username}</span>`;
+    toast('Bienvenue @'+auth.user.username+' 👋','success');
+  }catch(e){
+    el.innerHTML=`<span class="pi-pulse"></span><span id="piLabel">π Connect</span>`;
+    toast('Connexion annulée.','error');
+  }
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.Pi) Pi.init({version:'2.0',sandbox:true});
+  try{const s=localStorage.getItem('gtcqfs_lang');if(s&&T[s])setLang(s,document.getElementById('lb'+s.toUpperCase()));}catch(e){}
+});
+</script>
+</body>
+</html>
