@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TerraImmo — Immobilier & Élevage Fractionné · GeoTerraChain QFS</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--base:#000008;--b1:#08080F;--b2:#0D0D18;--b3:#12121E;--b4:#18182A;--glass:rgba(255,255,255,.03);--g2:rgba(255,255,255,.06);--gold:#C9A84C;--gl:#F0C860;--gd:#8A6B2A;--gbg:rgba(201,168,76,.08);--gborder:rgba(201,168,76,.2);--cyan:#0EA5E9;--cb:rgba(14,165,233,.2);--green:#10B981;--gb:rgba(16,185,129,.2);--red:#EF4444;--purple:#7B5CF0;--orange:#F59E0B;--text:#F0E8D8;--t2:#94A3B8;--t3:#475569;--border:rgba(255,255,255,.06);--r:16px;--rs:10px;--rl:24px;--glow:0 0 40px rgba(201,168,76,.12),0 0 80px rgba(201,168,76,.05)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--base);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;height:56px;background:rgba(0,0,8,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.topbar::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--cyan),transparent);opacity:.4}
+.tb-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tb-ring{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gd);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,rgba(201,168,76,.15),transparent);box-shadow:0 0 12px rgba(201,168,76,.2)}
+.tb-ring span{font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--gold)}
+.tb-info{flex-shrink:0}
+.tb-name{font-family:'Playfair Display',serif;font-size:14px;color:var(--gold)}
+.tb-sub{font-size:8px;color:var(--gd);letter-spacing:2px;text-transform:uppercase}
+.tnav{display:flex;gap:4px;margin-left:auto}
+.tnav a{font-size:11px;font-weight:600;color:var(--t3);text-decoration:none;padding:5px 10px;border-radius:8px;transition:all .2s;border:1px solid transparent}
+.tnav a:hover{color:var(--gl);border-color:var(--gborder);background:var(--gbg)}
+.pi-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid var(--gborder);border-radius:20px;font-size:11px;font-weight:700;color:var(--gl);cursor:pointer;transition:all .25s;white-space:nowrap;font-family:'Space Grotesk',sans-serif}
+.pi-btn:hover{box-shadow:0 0 20px rgba(201,168,76,.15)}
+.pi-pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* PAGE HERO */
+.page-hero{padding:40px 20px 32px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 0%,rgba(14,165,233,.07),transparent 65%)}
+.page-hero-inner{max-width:1160px;margin:0 auto;position:relative;z-index:1}
+.ph-label{font-size:9px;font-weight:700;color:var(--gd);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ph-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gd),transparent);max-width:120px}
+.ph-title{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,52px);color:var(--text);margin-bottom:6px;letter-spacing:-1px}
+.ph-title span{color:var(--gold)}
+.ph-desc{color:var(--t2);font-size:14px;font-weight:300;max-width:600px;line-height:1.7;margin-bottom:24px}
+.ph-stats{display:flex;gap:0;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:inline-flex}
+.phs{padding:12px 20px;border-right:1px solid var(--border);text-align:center}
+.phs:last-child{border-right:none}
+.phs-v{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);display:block}
+.phs-l{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+
+/* TABS */
+.tabs-bar{background:rgba(0,0,8,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;display:flex;overflow-x:auto;gap:0;position:sticky;top:56px;z-index:90}
+.tab-btn{padding:14px 18px;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;border-bottom:2px solid transparent;font-family:'Space Grotesk',sans-serif}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.act{color:var(--gl);border-bottom-color:var(--gold)}
+
+/* CONTENT */
+.content{max-width:1160px;margin:0 auto;padding:32px 20px}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.fb{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--glass);color:var(--t3);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
+.fb:hover,.fb.act{border-color:var(--gborder);color:var(--gl);background:var(--gbg)}
+
+/* LISTING GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
+/* ASSET CARD */
+.asset-card{background:rgba(13,13,24,.8);border:1px solid var(--border);border-radius:var(--rl);backdrop-filter:blur(20px);overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.asset-card:hover{border-color:var(--gborder);box-shadow:var(--glow);transform:translateY(-3px)}
+.ac-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;background:linear-gradient(135deg,rgba(18,18,30,.9),rgba(8,8,15,.9));border-bottom:1px solid var(--border)}
+.ac-img::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02),transparent)}
+.ac-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:1px;backdrop-filter:blur(10px)}
+.badge-sell{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gl)}
+.badge-rent{background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:#7DCCF0}
+.badge-nft{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#6EE7B7}
+.badge-frac{background:rgba(123,92,240,.12);border:1px solid rgba(123,92,240,.25);color:#B197FC}
+.ac-verif{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);display:flex;align-items:center;justify-content:center;font-size:11px}
+.ac-body{padding:16px}
+.ac-type{font-size:9px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:2px;margin-bottom:5px}
+.ac-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3}
+.ac-loc{font-size:11px;color:var(--t2);margin-bottom:12px}
+/* Progress */
+.prog-wrap{margin-bottom:10px}
+.prog-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:4px}
+.prog{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gl));border-radius:2px}
+/* Metrics */
+.ac-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.acm{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.acm-l{font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.acm-v{font-size:13px;font-weight:700;color:var(--text)}
+.acm-v.gold{color:var(--gold)}
+.acm-v.green{color:var(--green)}
+.ac-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border)}
+.ac-price{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold);font-weight:700}
+.ac-price-pi{font-size:10px;color:var(--gd)}
+
+/* GLASS PANEL */
+.glass-panel{background:rgba(13,13,24,.7);border:1px solid var(--border);border-radius:var(--rl);backdrop-filter:blur(20px);padding:28px;position:relative;overflow:hidden}
+.glass-panel::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02),transparent);pointer-events:none}
+.gp-header{padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.gp-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);margin-bottom:4px}
+.gp-desc{font-size:12px;color:var(--t2);font-weight:300}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:28px}
+.step{background:var(--b2);padding:18px 14px}
+.step-n{font-family:'Playfair Display',serif;font-size:28px;color:var(--gd);opacity:.4;line-height:1;margin-bottom:8px}
+.step-ico{font-size:18px;margin-bottom:6px}
+.step-t{font-size:12px;font-weight:700;color:var(--gl);margin-bottom:3px}
+.step-d{font-size:11px;color:var(--t2);line-height:1.5;font-weight:300}
+
+/* CALC BOX */
+.calc-box{background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gborder);border-radius:var(--r);padding:20px;margin-top:16px}
+.calc-title{font-size:10px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:3px;margin-bottom:14px}
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.calc-item{background:rgba(0,0,8,.4);border:1px solid var(--border);border-radius:8px;padding:10px}
+.ci-l{font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.ci-v{font-size:15px;font-weight:700;color:var(--text)}
+.ci-v.gold{color:var(--gold)}
+.ci-v.red{color:var(--red)}
+.ci-v.green{color:var(--green)}
+.calc-formula{margin-top:12px;padding:10px;background:rgba(0,0,8,.4);border-radius:8px;font-size:11px;color:var(--t2);text-align:center;font-family:'JetBrains Mono',monospace}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg.full{grid-column:1/-1}
+label{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+.req{color:var(--gl)}
+input,select,textarea{width:100%;min-height:44px;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);background:rgba(0,0,8,.5);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;transition:all .2s}
+textarea{min-height:90px;resize:vertical}
+select option{background:#0D0D18}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,168,76,.4);box-shadow:0 0 0 3px rgba(201,168,76,.05)}
+input::placeholder,textarea::placeholder{color:var(--t3)}
+input[readonly]{opacity:.6;cursor:default}
+
+/* MODAL */
+.mo-ov{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,8,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px}
+.mo-ov.open{display:flex}
+.mo{background:rgba(13,13,24,.95);border:1px solid var(--gborder);border-radius:var(--rl);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;backdrop-filter:blur(20px)}
+.mo-h{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:rgba(13,13,24,.95);z-index:1}
+.mo-h h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold)}
+.mo-close{background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;line-height:1}
+.mo-b{padding:20px}
+.mo-f{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;position:sticky;bottom:0;background:rgba(13,13,24,.95)}
+.dr{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;gap:12px}
+.dr:last-child{border-bottom:none}
+.dr span:first-child{color:var(--t2)}
+.dr span:last-child{font-weight:600;text-align:right}
+
+/* BUY BOX */
+.buy-box{background:rgba(0,0,8,.4);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:14px}
+.buy-title{font-size:9px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px}
+
+/* PORTFOLIO */
+.portfolio-empty{text-align:center;padding:48px 20px;color:var(--t3)}
+.item-row{display:flex;align-items:center;gap:14px;padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r);transition:border-color .2s;flex-wrap:wrap}
+.item-row:hover{border-color:var(--gborder)}
+.ir-ico{font-size:26px;flex-shrink:0}
+.ir-body{flex:1;min-width:0}
+.ir-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.ir-meta{font-size:11px;color:var(--t2)}
+.ir-right{text-align:right;flex-shrink:0}
+.ir-val{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold);font-weight:700;display:block}
+.ir-sub{font-size:9px;color:var(--t3)}
+
+/* ALERT */
+.alert{padding:12px 14px;border-radius:var(--rs);font-size:12px;border:1px solid var(--border);margin-bottom:14px;line-height:1.6;font-weight:300}
+.al-i{border-color:rgba(14,165,233,.25);color:#7DCCF0;background:rgba(14,165,233,.05)}
+.al-s{border-color:rgba(16,185,129,.25);color:#6EE7B7;background:rgba(16,185,129,.05)}
+.al-w{border-color:rgba(201,168,76,.25);color:var(--gl);background:var(--gbg)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;border:none;text-decoration:none;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--gl),var(--gold));color:#080808;box-shadow:0 6px 20px rgba(201,168,76,.25)}
+.btn-secondary{background:rgba(255,255,255,.05);border:1px solid var(--gborder);color:var(--gl)}
+.btn-secondary:hover{background:var(--gbg)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--t2)}
+.btn-ghost:hover{border-color:var(--gborder);color:var(--gl)}
+.btn-sm{padding:7px 13px;font-size:11px}
+
+/* TOAST */
+.toast-c{position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;width:min(320px,calc(100vw - 28px))}
+.toast{padding:11px 14px;border-radius:var(--rs);background:rgba(13,13,24,.97);border:1px solid var(--border);font-size:12px;animation:ti .2s ease}
+.toast.success{border-color:rgba(16,185,129,.4);color:#6EE7B7}
+.toast.error{border-color:rgba(239,68,68,.4);color:#FCA5A5}
+.toast.info{border-color:var(--gborder);color:var(--gl)}
+@keyframes ti{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.loader{display:inline-block;width:12px;height:12px;border:1.5px solid rgba(201,168,76,.2);border-top-color:var(--gl);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.footer-bar{text-align:center;padding:24px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+
+@media(max-width:640px){.tnav{display:none}.form-grid{grid-template-columns:1fr}.fg.full{grid-column:auto}.calc-grid{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}.ph-stats{flex-wrap:wrap}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="tb-brand">
+    <div class="tb-ring"><span>GTC</span></div>
+    <div class="tb-info"><div class="tb-name">TerraImmo</div><div class="tb-sub">GeoTerraChain QFS</div></div>
+  </div>
+  <nav class="tnav">
+    <a href="index.html">Accueil</a>
+    <a href="cooperatives.html">Coopératives</a>
+    <a href="pioneer.html">Mon espace</a>
+    <a href="guide-aide-geoterrachain-qfs.html">Guide</a>
+  </nav>
+  <div class="pi-btn" id="piBadge"><span class="pi-pulse"></span><span id="piLabel">π Connect</span></div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="ph-label">Immobilier & Élevage Fractionné · ImmoπCI · AgroPi</div>
+    <div class="ph-title">Terra<span>Immo</span></div>
+    <p class="ph-desc">Investissez dès 1 Pi dans des terrains, maisons, champs, troupeaux, pisciculture, myciculture et plus. Chaque fraction est un token certifié sur Stellar.</p>
+    <div class="ph-stats">
+      <div class="phs"><span class="phs-v" id="statBiens">6</span><span class="phs-l">Biens actifs</span></div>
+      <div class="phs"><span class="phs-v" id="statElevage">9</span><span class="phs-l">Types élevage</span></div>
+      <div class="phs"><span class="phs-v">1 π</span><span class="phs-l">Mise minimum</span></div>
+      <div class="phs"><span class="phs-v">0,5%</span><span class="phs-l">Burn GTCπ</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn act" onclick="showTab('marche',this)">🏘️ Marché</button>
+  <button class="tab-btn" onclick="showTab('fractions',this)">🧩 Fractions</button>
+  <button class="tab-btn" onclick="showTab('tokeniser',this)">◈ Tokeniser</button>
+  <button class="tab-btn" onclick="showTab('elevage',this)">🐄 Élevage</button>
+  <button class="tab-btn" onclick="showTab('portfolio',this)">📊 Portfolio</button>
+</div>
+
+<!-- ═════ TAB MARCHÉ ═════ -->
+<div id="tab-marche">
+<div class="content">
+  <div class="filters">
+    <button class="fb act" onclick="filterM('tous',this)">Tous</button>
+    <button class="fb" onclick="filterM('terrain',this)">🌍 Terrain</button>
+    <button class="fb" onclick="filterM('maison',this)">🏠 Maison</button>
+    <button class="fb" onclick="filterM('champ',this)">🌾 Champ</button>
+    <button class="fb" onclick="filterM('vente',this)">💰 Vente</button>
+    <button class="fb" onclick="filterM('location',this)">🔑 Location</button>
+  </div>
+  <div class="grid" id="marcheGrid"></div>
+</div>
+</div>
+
+<!-- ═════ TAB FRACTIONS ═════ -->
+<div id="tab-fractions" style="display:none">
+<div class="content">
+  <div class="alert al-i">🧩 Chaque fraction = part réelle d'un actif certifié ImmoπCI sur Stellar. Revenus distribués en Pi selon votre pourcentage de parts.</div>
+  <div class="filters">
+    <button class="fb act" onclick="filterF('tous',this)">Toutes</button>
+    <button class="fb" onclick="filterF('terrain',this)">🌍 Terrain</button>
+    <button class="fb" onclick="filterF('maison',this)">🏠 Maison</button>
+    <button class="fb" onclick="filterF('champ',this)">🌾 Champ</button>
+    <button class="fb" onclick="filterF('dispo',this)">✅ Disponibles</button>
+  </div>
+  <div class="grid" id="fractionsGrid"></div>
+</div>
+</div>
+
+<!-- ═════ TAB TOKENISER ═════ -->
+<div id="tab-tokeniser" style="display:none">
+<div class="content">
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><div class="step-ico">π</div><div class="step-t">Connexion Pi</div><div class="step-d">KYC Pioneer requis</div></div>
+    <div class="step"><div class="step-n">02</div><div class="step-ico">📋</div><div class="step-t">Déclarer</div><div class="step-d">Type, zone, valeur, surface</div></div>
+    <div class="step"><div class="step-n">03</div><div class="step-ico">🧩</div><div class="step-t">Fractions</div><div class="step-d">Nb fractions + prix unitaire</div></div>
+    <div class="step"><div class="step-n">04</div><div class="step-ico">🛰️</div><div class="step-t">GPS + Docs</div><div class="step-d">Coordonnées RTK + pièces</div></div>
+    <div class="step"><div class="step-n">05</div><div class="step-ico">🔥</div><div class="step-t">Burn GTCπ</div><div class="step-d">0,5% déflationnaire auto</div></div>
+    <div class="step"><div class="step-n">06</div><div class="step-ico">🏷️</div><div class="step-t">Émission</div><div class="step-d">ImmoπCI on-chain Stellar</div></div>
+  </div>
+
+  <div class="alert al-w" id="tokAuth">π Connectez-vous avec Pi Network pour tokeniser votre bien.</div>
+
+  <div class="glass-panel">
+    <div class="gp-header">
+      <div class="gp-title">◈ Déclaration du bien</div>
+      <p class="gp-desc">Les champs marqués * sont obligatoires · Émission ImmoπCI sur Stellar Testnet</p>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label>Type de bien <span class="req">*</span></label>
+        <select id="tokType">
+          <option value="">Sélectionner</option>
+          <option value="terrain">🌍 Terrain urbain / semi-urbain</option>
+          <option value="champ">🌾 Champ / Terrain agricole</option>
+          <option value="maison">🏠 Maison / Villa</option>
+          <option value="appartement">🏢 Appartement</option>
+          <option value="bureau">🏪 Bureau / Local commercial</option>
+          <option value="entrepot">🏭 Entrepôt / Hangar</option>
+          <option value="bovin">🐄 Élevage bovin</option>
+          <option value="aviculture">🐔 Aviculture</option>
+          <option value="pisciculture">🐟 Pisciculture / étang</option>
+          <option value="aquaculture">🦐 Aquaculture</option>
+          <option value="apiculture">🍯 Apiculture (ruches)</option>
+          <option value="porcin">🐖 Élevage porcin</option>
+          <option value="ovin">🐑 Élevage ovin / caprin</option>
+          <option value="raniculture">🐸 Raniculture (grenouilles)</option>
+          <option value="myciculture">🍄 Myciculture / Fongiculture</option>
+        </select>
+      </div>
+      <div class="fg"><label>Titre <span class="req">*</span></label><input id="tokTitre" type="text" placeholder="Ex : Terrain 500m² Cocody Riviera 2"></div>
+      <div class="fg"><label>Ville <span class="req">*</span></label><input id="tokVille" type="text" placeholder="Ex : Abidjan"></div>
+      <div class="fg"><label>Superficie (m² ou ha)</label><input id="tokSup" type="number" placeholder="Ex : 500"></div>
+      <div class="fg"><label>Valeur totale estimée (FCFA) <span class="req">*</span></label><input id="tokValeur" type="number" placeholder="Ex : 25000000" oninput="calcFractions()"></div>
+      <div class="fg"><label>Nombre de fractions ImmoπCI <span class="req">*</span></label><input id="tokFrac" type="number" placeholder="Ex : 1000" min="10" oninput="calcFractions()"></div>
+      <div class="fg"><label>Latitude GPS</label><input id="tokLat" type="number" step="any" placeholder="Ex : 5.3364"></div>
+      <div class="fg"><label>Longitude GPS</label><input id="tokLng" type="number" step="any" placeholder="Ex : -4.0267"></div>
+      <div class="fg"><label>Référence cadastrale</label><input id="tokCad" type="text" placeholder="CF-AB-2025-XXXXX"></div>
+      <div class="fg"><label>Type de rendement</label>
+        <select id="tokRend">
+          <option value="aucun">Plus-value à la revente uniquement</option>
+          <option value="loyer">Loyers distribués aux détenteurs</option>
+          <option value="agri">Revenus agricoles distribués</option>
+          <option value="vente_animaux">Vente animaux / troupeau</option>
+          <option value="vente_poisson">Vente poisson / aquaculture</option>
+          <option value="vente_miel">Vente miel + cire + propolis</option>
+          <option value="vente_champignons">Vente champignons (Volvariella volvacea + Pleurotes)</option>
+          <option value="vente_grenouilles">Vente grenouilles / cuisses</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Description <span class="req">*</span></label><textarea id="tokDesc" placeholder="Décrivez l'actif : état, accès, documents disponibles, potentiel de valorisation..."></textarea></div>
+    </div>
+
+    <div id="calcBox" style="display:none">
+      <div class="calc-box">
+        <div class="calc-title">◈ Calculateur de fractionnement</div>
+        <div class="calc-grid">
+          <div class="calc-item"><div class="ci-l">Valeur totale</div><div class="ci-v gold" id="cVal">—</div></div>
+          <div class="calc-item"><div class="ci-l">Nb fractions</div><div class="ci-v" id="cNb">—</div></div>
+          <div class="calc-item"><div class="ci-l">Prix / fraction</div><div class="ci-v gold" id="cPrix">—</div></div>
+          <div class="calc-item"><div class="ci-l">Prix en Pi</div><div class="ci-v" id="cPi">—</div></div>
+          <div class="calc-item"><div class="ci-l">GTCπ brûlé</div><div class="ci-v red" id="cBurn">—</div></div>
+          <div class="calc-item"><div class="ci-l">Fractions nettes</div><div class="ci-v green" id="cNet">—</div></div>
+        </div>
+        <div class="calc-formula" id="cFormule">—</div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;">
+      <span style="font-size:11px;color:var(--t2);">Émission ImmoπCI · Stellar Testnet · Burn 0,5% GTCπ</span>
+      <button class="btn btn-primary" id="tokBtn" onclick="submitTok()">◈ Lancer la tokenisation</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═════ TAB ÉLEVAGE ═════ -->
+<div id="tab-elevage" style="display:none">
+<div class="content">
+  <div class="alert al-i">🐄 Investissez dans des élevages tokenisés. Revenus distribués à chaque cycle de production. Token AgroPi sur Stellar.</div>
+  <div class="filters">
+    <button class="fb act" onclick="filterEL('tous',this)">Tous</button>
+    <button class="fb" onclick="filterEL('bovin',this)">🐄 Bovins</button>
+    <button class="fb" onclick="filterEL('aviculture',this)">🐔 Volailles</button>
+    <button class="fb" onclick="filterEL('pisciculture',this)">🐟 Pisciculture</button>
+    <button class="fb" onclick="filterEL('aquaculture',this)">🦐 Aquaculture</button>
+    <button class="fb" onclick="filterEL('apiculture',this)">🍯 Apiculture</button>
+    <button class="fb" onclick="filterEL('porcin',this)">🐖 Porcins</button>
+    <button class="fb" onclick="filterEL('ovin',this)">🐑 Ovins</button>
+    <button class="fb" onclick="filterEL('raniculture',this)">🐸 Raniculture</button>
+    <button class="fb" onclick="filterEL('myciculture',this)">🍄 Myciculture</button>
+  </div>
+  <div class="grid" id="elevageGrid"></div>
+</div>
+</div>
+
+<!-- ═════ TAB PORTFOLIO ═════ -->
+<div id="tab-portfolio" style="display:none">
+<div class="content">
+  <div id="portfolioContent">
+    <div class="portfolio-empty">
+      <div style="font-size:48px;margin-bottom:16px;">π</div>
+      <div style="font-size:14px;color:var(--t2);margin-bottom:6px;">Connexion Pi requise</div>
+      <div style="font-size:12px;margin-bottom:20px;">Accédez à vos fractions ImmoπCI et AgroPi</div>
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('piBadge').click()">π Se connecter</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer class="footer-bar">GeoTerraChain QFS · TerraImmo · NOTRE TERRE · NOTRE RICHESSE · © 2026 · Pi Network · Stellar Testnet</footer>
+<div class="toast-c" id="toastC"></div>
+
+<!-- MODAL -->
+<div class="mo-ov" id="moOv" onclick="closeMo(event)">
+  <div class="mo">
+    <div class="mo-h"><div><h3 id="moTitle">Détail</h3><div style="font-size:11px;color:var(--t2);margin-top:2px;" id="moRef"></div></div><button class="mo-close" onclick="document.getElementById('moOv').classList.remove('open')">✕</button></div>
+    <div class="mo-b" id="moBody"></div>
+    <div class="mo-f" id="moFoot"></div>
+  </div>
+</div>
+
+<script>
+const CFG={API:'https://geoterrachain-qfs-vercel.vercel.app',GCV:314159,SANDBOX:true,SCOPES:['username','payments'],BURN:.005};
+const S={piUser:null,accessToken:null,authed:false,portfolio:[],selected:null};
+
+const BIENS=[
+  {id:'TI-001',type:'terrain',ico:'🌍',titre:'Terrain 500m² — Cocody Riviera 2',ville:'Abidjan',quartier:'Cocody Riviera 2',sup:'500 m²',valeur:25000000,fractions:1000,vendues:420,offre:'vente',verified:true,nft:true,ref:'TI-ABJ-001',rendement:'aucun',desc:'Terrain plat, accès goudron, eau et électricité. Titre foncier disponible. Quartier prisé.',
+   token:'ImmoπCI'},
+  {id:'TI-002',type:'champ',ico:'🌾',titre:'Champ rizicole 12 ha — Songon',ville:'Abidjan',quartier:'Songon Bingerville',sup:'12 ha',valeur:48000000,fractions:2000,vendues:890,offre:'vente',verified:true,nft:true,ref:'TI-ABJ-002',rendement:'agri',desc:'Terrain agricole plat idéal riziculture. Source d\'eau, accès piste. Attestation propriété.',token:'ImmoπCI'},
+  {id:'TI-003',type:'maison',ico:'🏡',titre:'Villa 5 pièces — Bingerville',ville:'Abidjan',quartier:'Bingerville',sup:'180 m²',valeur:65000000,fractions:500,vendues:120,offre:'location',verified:true,nft:false,ref:'TI-ABJ-003',rendement:'loyer',desc:'Villa avec jardin, garage, groupe électrogène. Loyer 450 000 FCFA/mois.',token:'ImmoπCI'},
+  {id:'TI-004',type:'terrain',ico:'🌍',titre:'Terrain 300m² — Bouaké Nimbo',ville:'Bouaké',quartier:'Nimbo',sup:'300 m²',valeur:8000000,fractions:400,vendues:55,offre:'vente',verified:true,nft:true,ref:'TI-BKE-001',rendement:'aucun',desc:'Lotissement, accès bitumé. Certificat foncier disponible.',token:'ImmoπCI'},
+  {id:'TI-005',type:'champ',ico:'🌿',titre:'Plantation cacao 8 ha — San-Pédro',ville:'San-Pédro',quartier:'Périphérie',sup:'8 ha',valeur:32000000,fractions:1600,vendues:1200,offre:'vente',verified:true,nft:true,ref:'TI-SPD-001',rendement:'agri',desc:'Production cacao ~12t/an. Attestation villageoise + suivi ANADER.',token:'ImmoπCI'},
+  {id:'TI-006',type:'maison',ico:'🏢',titre:'Appartement F3 — Marcory',ville:'Abidjan',quartier:'Marcory Zone 4',sup:'75 m²',valeur:22000000,fractions:220,vendues:0,offre:'location',verified:false,nft:false,ref:'TI-ABJ-004',rendement:'loyer',desc:'F3 rénové, climatisé. Loyer 280 000 FCFA/mois.',token:'ImmoπCI'},
+];
+
+const ELEVAGE=[
+  {id:'EL-001',type:'bovin',ico:'🐄',titre:'Troupeau 50 bovins — Korhogo',ville:'Korhogo',espece:'Zébus N\'Dama',nb:50,unite:'têtes',valeur:25000000,fractions:500,vendues:210,ref:'EL-KOR-001',verified:true,rendement:'vente_animaux',cycle:'Annuel — engraissement 18 mois',desc:'Troupeau zébus en engraissement. Valorisation 500 000 FCFA/tête. Bergerie sécurisée.',token:'AgroPi'},
+  {id:'EL-002',type:'aviculture',ico:'🐔',titre:'Ferme avicole 5000 poulets — Bouaké',ville:'Bouaké',espece:'Poulets de chair / Pondeuses',nb:5000,unite:'individus',valeur:18000000,fractions:900,vendues:720,ref:'EL-BKE-001',verified:true,rendement:'vente_oeufs_viande',cycle:'Bimestriel — 45 jours',desc:'2 bâtiments 2500 poulets. Production 3500 œufs/jour. Contrats marchés locaux.',token:'AgroPi'},
+  {id:'EL-003',type:'pisciculture',ico:'🐟',titre:'Étang tilapia 1 ha — Yamoussoukro',ville:'Yamoussoukro',espece:'Tilapia du Nil / Silure',nb:8000,unite:'individus',valeur:12000000,fractions:600,vendues:180,ref:'EL-YAM-001',verified:true,rendement:'vente_poisson',cycle:'Trimestriel — 90 jours',desc:'1 ha. Production 8t/an. Proximité lac Kossou. Marché local assuré.',token:'AgroPi'},
+  {id:'EL-004',type:'ovin',ico:'🐑',titre:'Troupeau 200 moutons — Ferkessédougou',ville:'Ferkessédougou',espece:'Moutons Djallonké / Peul-Peul',nb:200,unite:'têtes',valeur:16000000,fractions:400,vendues:95,ref:'EL-FRK-001',verified:false,rendement:'vente_animaux',cycle:'Annuel — Tabaski + marchés',desc:'Pâturage naturel 500 ha. Bergère expérimentée en charge.',token:'AgroPi'},
+  {id:'EL-005',type:'apiculture',ico:'🍯',titre:'Ruchers 200 ruches — Man',ville:'Man',espece:'Abeilles Apis mellifera adansonii',nb:200,unite:'ruches',valeur:8000000,fractions:400,vendues:60,ref:'EL-MAN-001',verified:true,rendement:'vente_miel',cycle:'Biannuel — saison sèche + pluies',desc:'200 ruches Langstroth en forêt. 4 000 kg miel/an. Cire, propolis valorisés.',token:'AgroPi'},
+  {id:'EL-006',type:'porcin',ico:'🐖',titre:'Élevage porcin 300 têtes — San-Pédro',ville:'San-Pédro',espece:'Large White / Métis locaux',nb:300,unite:'têtes',valeur:21000000,fractions:700,vendues:350,ref:'EL-SPD-001',verified:true,rendement:'vente_animaux',cycle:'Quadrimestriel — 4 mois',desc:'Porcherie moderne. 4 rotations/an. Contrats boucheries.',token:'AgroPi'},
+  {id:'EL-007',type:'aquaculture',ico:'🦐',titre:'Bassins crevettes 0,5 ha — Jacqueville',ville:'Jacqueville',espece:'Penaeus monodon',nb:500000,unite:'individus',valeur:35000000,fractions:1000,vendues:0,ref:'EL-JAC-001',verified:false,rendement:'vente_poisson',cycle:'Bimestriel — 60 jours',desc:'Bassin semi-intensif en lagune. 2t/cycle. Export hôtels Abidjan.',token:'AgroPi'},
+  {id:'EL-008',type:'raniculture',ico:'🐸',titre:'Ferme grenouilles 10 bassins — Agboville',ville:'Agboville',espece:'Dicroglossus occipitalis / Rana',nb:20000,unite:'individus',valeur:9000000,fractions:450,vendues:130,ref:'EL-AGB-001',verified:true,rendement:'vente_animaux',cycle:'Trimestriel — 3 mois',desc:'10 bassins en zone humide forestière. 2 000 kg cuisses/an. Demande forte hôtels Abidjan + export Europe.',token:'AgroPi'},
+  {id:'EL-009',type:'myciculture',ico:'🍄',titre:'Champignonnière 500m² — Daloa',ville:'Daloa',espece:'Volvaire (Volvariella volvacea) · Pleurotes · Shiitake',nb:5000,unite:'kg/mois',valeur:6500000,fractions:325,vendues:80,ref:'EL-DAL-001',verified:true,rendement:'vente_champignons',cycle:'Mensuel — récolte 10–21 jours selon espèce',desc:'Volvariella volvacea sur paille de riz (cycle 10–14 jours, championne africaine). Pleurotes sur sciure. Shiitake premium. 500 kg/mois. Contrats supermarchés Daloa + Abidjan.',token:'AgroPi'},
+];
+
+function $(id){return document.getElementById(id)}
+function toast(msg,type='info'){const c=$('toastC');const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),4200)}
+function fFcfa(v){return Number(v).toLocaleString('fr-FR')+' FCFA'}
+function fPi(v){return (v/CFG.GCV).toFixed(4)+' π'}
+function fNum(v){return Number(v).toLocaleString('fr-FR')}
+function pct(v,t){return Math.round(v/t*100)}
+
+function showTab(n,btn){
+  ['marche','fractions','tokeniser','elevage','portfolio'].forEach(t=>{const el=$('tab-'+t);if(el)el.style.display='none'});
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('act'));
+  const el=$('tab-'+n);if(el)el.style.display='block';
+  btn.classList.add('act');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n==='portfolio')renderPortfolio();
+}
+
+function cardHTML(b,mode){
+  const p=pct(b.vendues,b.fractions);
+  const prixFrac=Math.round(b.valeur/b.fractions);
+  const dispo=b.fractions-b.vendues;
+  const supLabel=b.sup||b.nb+' '+b.unite;
+  return `<div class="asset-card" onclick="openModal(${JSON.stringify({...b}).replace(/"/g,'&quot;')})">
+    <div class="ac-img">
+      ${b.ico}
+      <span class="ac-badge ${b.offre==='location'?'badge-rent':b.token==='AgroPi'?'badge-frac':'badge-sell'}">${b.offre==='location'?'LOCATION':b.token==='AgroPi'?'AGRO':'VENTE'}</span>
+      ${b.verified?'<div class="ac-verif">✓</div>':''}
+    </div>
+    <div class="ac-body">
+      <div class="ac-type">${b.type?.replace('_',' ')||''}${b.espece?' · '+b.espece.split('·')[0].trim():''}</div>
+      <div class="ac-title">${b.titre}</div>
+      <div class="ac-loc">📍 ${b.quartier||b.ville}${b.cycle?' · ⏱️ '+b.cycle:''}</div>
+      <div class="prog-wrap">
+        <div class="prog-labels"><span>${fNum(dispo)} fractions dispo</span><span>${p}%</span></div>
+        <div class="prog"><div class="prog-fill" style="width:${p}%"></div></div>
+      </div>
+      <div class="ac-metrics">
+        <div class="acm"><div class="acm-l">Valeur totale</div><div class="acm-v gold" style="font-size:11px;">${fFcfa(b.valeur)}</div></div>
+        <div class="acm"><div class="acm-l">Prix/fraction</div><div class="acm-v gold" style="font-size:11px;">${fFcfa(prixFrac)}</div></div>
+      </div>
+      <div class="ac-footer">
+        <div><div class="ac-price">${fPi(prixFrac)}</div><div class="ac-price-pi">par fraction ${b.token}</div></div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation()">Investir →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderGrid(id,list){const g=$(id);if(!g)return;g.innerHTML=list.length?list.map(b=>cardHTML(b)).join(''):'<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);">Aucun actif dans cette catégorie</div>';}
+function renderMarche(list){renderGrid('marcheGrid',list)}
+function renderFractions(list){renderGrid('fractionsGrid',list)}
+function renderElevage(list){renderGrid('elevageGrid',list)}
+
+function filterM(f,btn){document.querySelectorAll('#tab-marche .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderMarche(f==='tous'?BIENS:BIENS.filter(b=>b.type===f||b.offre===f))}
+function filterF(f,btn){document.querySelectorAll('#tab-fractions .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderFractions(f==='tous'?BIENS:f==='dispo'?BIENS.filter(b=>b.vendues<b.fractions):BIENS.filter(b=>b.type===f))}
+function filterEL(f,btn){document.querySelectorAll('#tab-elevage .fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderElevage(f==='tous'?ELEVAGE:ELEVAGE.filter(b=>b.type===f))}
+
+function openModal(b){
+  S.selected=b;
+  const prixFrac=Math.round(b.valeur/b.fractions);
+  const dispo=b.fractions-b.vendues;
+  const p=pct(b.vendues,b.fractions);
+  $('moTitle').textContent=b.titre;
+  $('moRef').textContent=`Réf : ${b.ref} · ${b.token}`;
+  $('moBody').innerHTML=`
+    <div style="text-align:center;font-size:52px;padding:16px;border-bottom:1px solid var(--border);margin-bottom:16px;">${b.ico}</div>
+    <div class="dr"><span>Type</span><span>${b.type}</span></div>
+    <div class="dr"><span>Localisation</span><span>${b.quartier||b.ville||''}</span></div>
+    ${b.sup?`<div class="dr"><span>Superficie</span><span>${b.sup}</span></div>`:''}
+    ${b.espece?`<div class="dr"><span>Espèce</span><span style="font-size:11px;">${b.espece}</span></div>`:''}
+    ${b.nb?`<div class="dr"><span>Effectif</span><span>${fNum(b.nb)} ${b.unite}</span></div>`:''}
+    ${b.cycle?`<div class="dr"><span>Cycle</span><span style="font-size:11px;">${b.cycle}</span></div>`:''}
+    <div class="dr"><span>Valeur totale</span><span style="color:var(--gold)">${fFcfa(b.valeur)}</span></div>
+    <div class="dr"><span>Fractions totales</span><span>${fNum(b.fractions)}</span></div>
+    <div class="dr"><span>Fractions disponibles</span><span style="color:${dispo>0?'var(--green)':'var(--red)'};">${fNum(dispo)}</span></div>
+    <div class="dr"><span>Prix / fraction</span><span style="color:var(--gold)">${fFcfa(prixFrac)}</span></div>
+    <div class="dr"><span>≈ en Pi</span><span>${fPi(prixFrac)}</span></div>
+    <div class="dr"><span>Part / fraction</span><span>${(1/b.fractions*100).toFixed(4)}%</span></div>
+    <div class="dr"><span>Token</span><span style="font-family:'JetBrains Mono',monospace;">${b.token}</span></div>
+    <div class="dr"><span>Vérifié GTC QFS</span><span style="color:${b.verified?'var(--green)':'var(--t2)'};">${b.verified?'✓ Oui':'En cours'}</span></div>
+    <div style="margin-top:12px;padding:12px;background:rgba(0,0,8,.4);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.6;">${b.desc}</div>
+    <div style="margin-top:12px;background:rgba(0,0,8,.4);border-radius:8px;padding:12px;">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px;"><span>Progression</span><span>${p}%</span></div>
+      <div class="prog"><div class="prog-fill" style="width:${p}%;${b.token==='AgroPi'?'background:linear-gradient(90deg,var(--green),#6EE7B7)':''}"></div></div>
+    </div>
+    ${dispo>0?`<div class="buy-box">
+      <div class="buy-title">◈ Acheter des fractions ${b.token}</div>
+      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:8px;">
+        <div style="flex:1;"><label style="font-size:9px;">Nb fractions</label><input type="number" id="buyQty" min="1" max="${dispo}" value="1" oninput="updateBuyTotal(${prixFrac})" style="margin-top:4px;"></div>
+        <div style="text-align:right;"><div style="font-size:9px;color:var(--t3);">Max dispo</div><div style="font-size:14px;color:var(--gl);font-weight:700;">${fNum(dispo)}</div></div>
+      </div>
+      <div id="buyTotal" style="font-size:12px;color:var(--t2);margin-bottom:12px;">Total : <strong style="color:var(--gl)">${fFcfa(prixFrac)}</strong> = <strong style="color:var(--gl)">${fPi(prixFrac)}</strong></div>
+      <div class="alert al-s" style="margin:0;font-size:11px;">Chaque fraction = ${(1/b.fractions*100).toFixed(4)}% de propriété réelle. Token ${b.token} émis sur Stellar.</div>
+    </div>`:'<div class="alert" style="margin-top:14px;border-color:rgba(239,68,68,.25);color:#FCA5A5;background:rgba(239,68,68,.05);">Toutes les fractions ont été vendues.</div>'}`;
+  $('moFoot').innerHTML=dispo>0
+    ?`<button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('moOv').classList.remove('open')">Fermer</button><button class="btn btn-primary" style="flex:2;" onclick="acheterFractions()">π Payer en Pi →</button>`
+    :`<button class="btn btn-primary" style="flex:1;" onclick="document.getElementById('moOv').classList.remove('open')">Fermer</button>`;
+  $('moOv').classList.add('open');
+}
+function updateBuyTotal(p){const q=Number($('buyQty')?$('buyQty').value:1)||1;if($('buyTotal'))$('buyTotal').innerHTML=`Total : <strong style="color:var(--gl)">${fFcfa(p*q)}</strong> = <strong style="color:var(--gl)">${(p*q/CFG.GCV).toFixed(4)} π</strong>`;}
+function closeMo(e){if(e.target===$('moOv'))$('moOv').classList.remove('open');}
+
+async function acheterFractions(){
+  if(!S.authed){toast('Connexion Pi requise.','error');$('moOv').classList.remove('open');$('piBadge').click();return}
+  const b=S.selected;const qty=Number($('buyQty')?$('buyQty').value:1)||1;
+  const prixFrac=Math.round(b.valeur/b.fractions);
+  const total=parseFloat((prixFrac*qty/CFG.GCV).toFixed(6));
+  $('moOv').classList.remove('open');
+  toast(`Initialisation paiement Pi pour ${qty} fraction(s)…`,'info');
+  try{
+    await Pi.createPayment({amount:total,memo:`TerraImmo:${b.ref}:${qty}fractions`,metadata:{bien_id:b.id,fractions:qty}},{
+      onReadyForServerApproval:async(pid)=>{try{const r=await fetch(`${CFG.API}/api/payment-approve`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken:S.accessToken,paymentId:pid})});const d=await r.json();if(!d.ok)throw new Error(d.error||'Approbation refusée.');}catch(e){toast(e.message,'error')}},
+      onReadyForServerCompletion:async(pid,txid)=>{try{const r=await fetch(`${CFG.API}/api/payment-complete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken:S.accessToken,paymentId:pid,txid})});const d=await r.json();if(!d.ok)throw new Error(d.error);
+        const idx=[...BIENS,...ELEVAGE].findIndex(x=>x.id===b.id);
+        S.portfolio.push({bien:b,qty,txid,date:new Date().toLocaleDateString('fr-FR')});
+        renderMarche(BIENS);renderFractions(BIENS);renderElevage(ELEVAGE);
+        toast(`✅ ${qty} fraction(s) ${b.token} acquise(s) ! TXID: ${txid.slice(0,12)}…`,'success');
+      }catch(e){toast(e.message,'error')}},
+      onCancel:()=>toast('Achat annulé.','error'),
+      onError:(e)=>toast(e?.message||'Erreur.','error')
+    });
+  }catch(e){toast(e.message||'Impossible de créer le paiement.','error')}
+}
+
+function calcFractions(){
+  const v=Number($('tokValeur').value),n=Number($('tokFrac').value);
+  if(!v||!n||n<10){$('calcBox').style.display='none';return}
+  $('calcBox').style.display='block';
+  const pf=v/n,burn=Math.ceil(n*CFG.BURN),net=n-burn;
+  $('cVal').textContent=fFcfa(v);$('cNb').textContent=fNum(n);$('cPrix').textContent=fFcfa(Math.round(pf));
+  $('cPi').textContent='≈ '+fPi(pf);$('cBurn').textContent=burn+' GTCπ (−0,5%)';$('cNet').textContent=fNum(net)+' fractions';
+  $('cFormule').textContent=`${fNum(n)} × ${fFcfa(Math.round(pf))} = ${fFcfa(v)} · Burn : ${burn} GTCπ · Net : ${fNum(net)}`;
+}
+
+async function submitTok(){
+  if(!S.authed){toast('Connexion Pi obligatoire.','error');$('piBadge').click();return}
+  const type=$('tokType').value,titre=$('tokTitre').value.trim(),ville=$('tokVille').value.trim(),valeur=Number($('tokValeur').value),fracs=Number($('tokFrac').value),desc=$('tokDesc').value.trim();
+  if(!type||!titre||!ville||!valeur||!fracs||!desc){toast('Complétez tous les champs obligatoires.','error');return}
+  const btn=$('tokBtn');btn.disabled=true;btn.innerHTML='<span class="loader"></span>Émission…';
+  const burn=Math.ceil(fracs*CFG.BURN);
+  try{
+    let ref=`TI-NEW-${Date.now().toString().slice(-6)}`;
+    try{const r=await fetch(`${CFG.API}/api/terraimmo/tokenize`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type,titre,ville,valeur,fractions:fracs,desc,pi_uid:S.piUser.uid,pi_username:S.piUser.username,accessToken:S.accessToken})});if(r.ok){const d=await r.json();ref=d.ref||ref;}}catch{}
+    const icons={terrain:'🌍',champ:'🌾',maison:'🏠',appartement:'🏢',bureau:'🏪',entrepot:'🏭',bovin:'🐄',aviculture:'🐔',pisciculture:'🐟',aquaculture:'🦐',apiculture:'🍯',porcin:'🐖',ovin:'🐑',raniculture:'🐸',myciculture:'🍄'};
+    BIENS.unshift({id:`TI-N-${Date.now()}`,type,ico:icons[type]||'🌍',titre,ville,quartier:$('tokVille').value.trim(),sup:$('tokSup').value?$('tokSup').value+' m²':'',valeur,fractions:fracs,vendues:0,offre:'vente',verified:false,nft:false,ref,rendement:$('tokRend').value,desc,token:['bovin','aviculture','pisciculture','aquaculture','apiculture','porcin','ovin','raniculture','myciculture'].includes(type)?'AgroPi':'ImmoπCI'});
+    renderMarche(BIENS);renderFractions(BIENS);renderElevage(ELEVAGE);
+    toast(`✅ Bien tokenisé ! ${fracs-burn} fractions émises · Réf : ${ref}`,'success');
+    showTab('fractions',document.querySelectorAll('.tab-btn')[1]);
+  }finally{btn.disabled=false;btn.innerHTML='◈ Lancer la tokenisation';}
+}
+
+function renderPortfolio(){
+  const box=$('portfolioContent');
+  if(!S.authed){box.innerHTML=`<div class="portfolio-empty"><div style="font-size:48px;margin-bottom:16px;">π</div><div style="font-size:14px;color:var(--t2);margin-bottom:6px;">Connexion Pi requise</div><button class="btn btn-primary btn-sm" onclick="document.getElementById('piBadge').click()">π Se connecter</button></div>`;return}
+  if(!S.portfolio.length){box.innerHTML=`<div class="portfolio-empty"><div style="font-size:48px;margin-bottom:16px;">🧩</div><div style="font-size:14px;color:var(--t2);margin-bottom:8px;">Aucune fraction dans votre portefeuille</div><button class="btn btn-primary btn-sm" onclick="showTab('fractions',document.querySelectorAll('.tab-btn')[1])">🧩 Voir les fractions</button></div>`;return}
+  const tv=S.portfolio.reduce((a,p)=>a+(p.bien.valeur/p.bien.fractions*p.qty),0);
+  box.innerHTML=`<div class="alert al-s">✓ @${S.piUser.username} · ${S.portfolio.length} investissement(s) · Valeur totale : ${fFcfa(Math.round(tv))}</div><div style="display:flex;flex-direction:column;gap:10px;">${S.portfolio.map(p=>{const pf=Math.round(p.bien.valeur/p.bien.fractions);const vt=pf*p.qty;const part=(p.qty/p.bien.fractions*100).toFixed(4);return `<div class="item-row"><span class="ir-ico">${p.bien.ico}</span><div class="ir-body"><div class="ir-title">${p.bien.titre}</div><div class="ir-meta">${p.bien.token} · ${p.qty} fraction(s) · Part : ${part}% · ${p.date}</div>${p.txid?`<div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:3px;">TXID : ${p.txid.slice(0,24)}…</div>`:''}</div><div class="ir-right"><span class="ir-val">${fFcfa(vt)}</span><span class="ir-sub">≈ ${(vt/CFG.GCV).toFixed(2)} π</span></div></div>`;}).join('')}</div>`;
+}
+
+$('piBadge').addEventListener('click',async()=>{
+  if(S.authed){toast(`Connecté @${S.piUser.username}`,'info');return}
+  if(!window.Pi){toast('Ouvrez dans Pi Browser.','error');return}
+  $('piLabel').innerHTML='<span class="loader"></span>';
+  try{
+    const auth=await Pi.authenticate(CFG.SCOPES,p=>console.log(p));
+    S.piUser=auth.user;S.accessToken=auth.accessToken;S.authed=true;
+    $('piLabel').textContent='@'+auth.user.username;
+    $('tokAuth').className='alert al-s';$('tokAuth').textContent=`✓ Connecté @${auth.user.username} — vous pouvez tokeniser votre bien.`;
+    toast(`Bienvenue @${auth.user.username} 👋`,'success');
+  }catch(e){$('piLabel').textContent='π Connect';toast('Connexion annulée.','error');}
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.Pi) Pi.init({version:'2.0',sandbox:CFG.SANDBOX});
+  renderMarche(BIENS);renderFractions(BIENS);renderElevage(ELEVAGE);
+  $('statBiens').textContent=BIENS.length;$('statElevage').textContent=ELEVAGE.length;
+});
+</script>
+</body>
+</html>
